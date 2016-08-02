@@ -3,7 +3,16 @@ package post
 import com.lightbend.blog.post.{PostData, PostId}
 import play.api.libs.json._
 
+
+/**
+ * DTO for displaying Comment information.
+ */
 case class Comment(body: String)
+
+/**
+ * DTO for displaying Post information.
+ */
+case class Post(id: String, link: String, title: String, body: String, comments: Seq[Comment])
 
 object Comment {
   implicit val implicitWrites = new Writes[Comment] {
@@ -14,9 +23,6 @@ object Comment {
     }
   }
 }
-
-
-case class Post(id: String, link: String, title: String, body: String, comments: Seq[Comment])
 
 object Post {
 
@@ -36,7 +42,7 @@ object Post {
     Post(p.id.toString, link(p.id), p.title, p.body, comments)
   }
 
-  private def link(id: PostId): String = {
+  def link(id: PostId): String = {
     import com.netaporter.uri.dsl._
     val url = "/posts" / id.toString
     url.toString()

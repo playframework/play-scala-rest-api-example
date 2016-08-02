@@ -3,10 +3,8 @@ package filters
 import javax.inject._
 
 import akka.stream.Materializer
-import com.google.inject.AbstractModule
 import com.netaporter.uri.Uri
 import com.typesafe.config.Config
-import play.api.Configuration
 import play.api.mvc.{Filter, RequestHeader, Result, Results}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,26 +61,12 @@ final case class StrictTransportSecurityConfig(maxAge: java.time.Duration,
 
 object StrictTransportSecurityConfig {
   def fromConfiguration(config: Config): StrictTransportSecurityConfig = {
-    val hstsConfig = config.getConfig("restapi.filters.hsts")
+    val hstsConfig = config.getConfig("play.filters.hsts")
 
     val maxAge = hstsConfig.getDuration("maxAge")
     val secureHost = hstsConfig.getString("secureHost")
     val securePort = hstsConfig.getInt("securePort")
 
     StrictTransportSecurityConfig(maxAge, secureHost, securePort)
-  }
-}
-
-/**
- * Pulls in setting for StrictTransportSecurityFilter via conf/application.conf
- *
- * @param configuration the application.conf configuration
- */
-@Singleton
-class StrictTransportSecurityConfigProvider @Inject()(configuration: Configuration)
-  extends Provider[StrictTransportSecurityConfig] {
-
-  lazy val get: StrictTransportSecurityConfig = {
-    StrictTransportSecurityConfig.fromConfiguration(configuration.underlying)
   }
 }

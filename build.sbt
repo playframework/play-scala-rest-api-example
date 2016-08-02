@@ -2,8 +2,7 @@ import sbt.Keys._
 
 // Set up two data repositories that will serve us raw data which we have to
 // present through a REST API.  These don't know about Play, and can be run
-// on their own without including any Play classes.  They each contain a
-// minimal Guice binding which Play calls through "play.modules.enabled".
+// on their own without including any Play classes.
 
 // Provides post repository to the system.
 lazy val postModule = (project in file("modules/post")).enablePlugins(Common)
@@ -16,18 +15,19 @@ lazy val root = (project in file(".")).enablePlugins(Common, PlayScala)
   .settings(
     name := """rest-api""",
     libraryDependencies ++= Seq(
-      // Use cached module to store cached data automatically
-      cache,
-
       // Use Play filters to set up security headers and HSTS.
       filters,
 
+      // A useful URL construction library
       "com.netaporter" %% "scala-uri" % "0.4.14",
 
-      // Pull in bootstrap and jquery
-      "org.webjars" %% "webjars-play" % "2.5.0",
-      "org.webjars" % "bootstrap" % "3.3.6",
-      "org.webjars" % "jquery" % "2.2.3"
+      // metrics library (used in PostAction)
+      "nl.grons" %% "metrics-scala" % "3.5.4_a2.3",
+
+      // Pull in play-bootstrap for twitter bootstrap form helper styling
+      "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
+      //play-bootstrap adds "org.webjars" % "bootstrap" % "3.3.6",
+      //play-bootstrap adds "org.webjars" % "jquery" % "2.2.3"
     )
   ).aggregate(postModule, commentModule)
   .dependsOn(postModule, commentModule)

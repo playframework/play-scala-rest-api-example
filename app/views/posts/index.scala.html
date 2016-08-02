@@ -1,10 +1,12 @@
-@(posts: Iterable[post.Post])(implicit request: post.PostRequest[_])
+@(posts: Iterable[post.Post], form: Form[post.PostFormInput])(implicit request: post.PostRequest[_])
 
 @main("Posts") {
 
   <div class="header">
     <h1 class="header-title">Posts</h1>
   </div>
+
+  @flash()
 
   <table class="table table-striped">
     <thead>
@@ -20,4 +22,7 @@
     </tbody>
   </table>
 
+  <div>
+    @create(form)
+  </div>
 }

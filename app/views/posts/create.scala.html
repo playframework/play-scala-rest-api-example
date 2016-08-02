@@ -1,1 +1,10 @@
-@()(implicit request: post.PostRequest[_])
+@(form: Form[post.PostFormInput])(implicit request: post.PostRequest[_])
+
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
+
+@b3.form(Call("POST", request.uri)) {
+    @helper.CSRF.formField
+    @b3.text( form("title"), '_label -> "Title", 'placeholder -> "Title" )
+    @b3.textarea( form("body"), '_label -> "Body", 'placeholder -> "Body" )
+    @b3.submit('class -> "btn btn-default"){ Create }
+}

@@ -7,6 +7,8 @@ import play.filters.headers.SecurityHeadersFilter
 import play.filters.hosts.AllowedHostsFilter
 
 /**
+ * Sets up default filters to redirect to HTTPS and enable security filters.
+ *
  * https://www.playframework.com/documentation/latest/ScalaHttpFilters
  */
 class Filters @Inject()(hstsFilter: StrictTransportSecurityFilter,

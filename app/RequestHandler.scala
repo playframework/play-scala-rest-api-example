@@ -6,6 +6,8 @@ import play.api.routing.Router
 
 /**
  * Handles all requests.
+ *
+ * https://www.playframework.com/documentation/2.5.x/ScalaHttpRequestHandlers#extending-the-default-request-handler
  */
 class RequestHandler @Inject()(router: Router,
                                errorHandler: HttpErrorHandler,

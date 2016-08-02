@@ -1,0 +1,11 @@
+@()(implicit request: post.PostRequest[_])
+
+@request.flashSuccess.map { message =>
+  <div class="alert alert-success" role="alert">@message</div>
+}
+
+@request.flashError.map { message =>
+  <div class="alert alert-danger" role="alert">@message</div>
+}
+
+
