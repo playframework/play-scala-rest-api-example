@@ -6,7 +6,7 @@ Imagine a REST API for displaying blog posts, containing a `Post` resource.  Thi
 * `GET /post/1` shows a single blog post.  
 * `POST /posts` creates a new blog post.
 
-[Play Framework](https://www.playframework.com/documentation/2.5.x) does this out of the box -- in fact, Play leverages REST principles from the ground up to work directly against HTTP, without any additional layers or specialized annotations, so working with REST is fun.
+The [Play Framework](https://www.playframework.com/documentation/2.5.x) does this out of the box.  In fact, Play leverages REST principles from the ground up to work directly against HTTP, without any additional layers or specialized annotations, so working with REST is fun.
 
 However, a REST API is more than just fun.  When people ask for a REST API, they're often asking for multiple features which some frameworks should be able to provide, but not all do.  A good REST API frameworks means the ability to do a number of things:
 
@@ -20,9 +20,9 @@ However, a REST API is more than just fun.  When people ask for a REST API, they
 
 Play does all of this, and is used as the standard REST API for services infrastructure at companies like [LinkedIn](https://www.lightbend.com/resources/case-studies-and-stories/the-play-framework-at-linkedin) and [Hootsuite](https://www.lightbend.com/resources/case-studies-and-stories/how-hootsuite-modernized-its-url-shortener). 
 
-We'll demonstrate with a "best practices" REST API that you can clone from [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api).  
+We'll demonstrate with a "best practices" REST API that you can clone from [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api) -- this example is in Scala, but Play also has a [Java API](https://playframework.com/documentation/2.5.x/JavaHome) which looks and acts just like the Scala API. 
 
-Note that this is an example rather than a framework and so it won't cover everything.  There are other examples we'll point to at the end of this document that cover pagination, sorting, searching and authentication.
+Note that there's more involved in a REST API that there isn't room to cover here, such as pagination, filtering, sorting & searching.  For a more in-depth look at those topics, Adrian Hurt's seed template [play-api-rest-seed](https://github.com/adrianhurt/play-api-rest-seed), and look at [Silhouette](http://silhouette.mohiva.com/) and [Deadbolt 2](http://deadbolt.ws/) for authentication and authorization.
  
 ## Running
 
@@ -663,10 +663,8 @@ class PostActionConfigProvider @Inject()(configuration: Configuration)
 
 ## Conclusion
 
-This concludes our quick tour of using Play as a REST API -- I hope this shows a good overview of Play's feature set.  Play makes it easy to write non-blocking code that makes the best use of system resources, and does so with fewer lines of code and a clean, expressive style.
+This concludes our quick tour of Play!  Play makes a great REST API because it makes it easy to write non-blocking code in a clean, expressive style.
 
-Note that there's more involved in a REST API that there isn't room to cover here, such as pagination, filtering, sorting & searching.  For a more in-depth look, Adrian Hurt's seed template [play-api-rest-seed](https://github.com/adrianhurt/play-api-rest-seed), and look at [Silhouette](http://silhouette.mohiva.com/) and [Deadbolt 2](http://deadbolt.ws/) for authentication and authorization.
-)
-
+For more example templates and starter seed templates, including database and Websocket examples, please see the [Play Frameworks Tutorials](https://www.playframework.com/documentation/2.5.x/Tutorials) page at [playframework.com](https://playframework.com), and checkout my book in progress, [Play in Practice](http://shop.oreilly.com/product/0636920035718.do). 
 
 
