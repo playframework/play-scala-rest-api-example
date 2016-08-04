@@ -40,7 +40,7 @@ trait CommentRepositoryLifecycle {
  * strongly typed execution context so that an inappropriate ExecutionContext can't
  * be used by accident.
  */
-class CommentExecutionContext(val underlying: ExecutionContext) extends AnyVal
+class CommentExecutionContext(val underlying: ExecutionContext)
 
 /**
  * A trivial implementation for the Comment Repository.

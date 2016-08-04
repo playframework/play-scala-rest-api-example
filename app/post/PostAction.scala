@@ -1,13 +1,16 @@
 package post
 
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+import akka.actor.ActorSystem
 import com.codahale.metrics.MetricRegistry
 import nl.grons.metrics.scala.InstrumentedBuilder
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{ExecutionContext, Future, TimeoutException}
 
 /**
  * The default action for the Post resource.
@@ -18,6 +21,7 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 class PostAction @Inject()(config: PostActionConfig,
                            messagesApi: MessagesApi,
+                           actorSystem: ActorSystem,
                            val metricRegistry: MetricRegistry)(implicit ec: ExecutionContext)
   extends ActionBuilder[PostRequest] with InstrumentedBuilder {
 
@@ -31,6 +35,8 @@ class PostAction @Inject()(config: PostActionConfig,
 
   private val maxAge = config.maxAge.getSeconds
 
+  private val timeoutDuration = FiniteDuration(config.timeout.toMillis, TimeUnit.MILLISECONDS)
+
   override def invokeBlock[A](request: Request[A], block: PostRequestBlock[A]): Future[Result] = {
     if (logger.isTraceEnabled) {
       logger.trace(s"invokeBlock: request = $request")
@@ -39,18 +45,34 @@ class PostAction @Inject()(config: PostActionConfig,
     // Count the number of requests
     requestsMeter.mark()
 
-    // Measures the wall clock time to execute the action
-    wallClockTimer.timeFuture {
-      val messages = messagesApi.preferred(request)
-      val postRequest = new PostRequest(request, messages)
-      block(postRequest).map { result =>
-        if (postRequest.method == "GET") {
-          result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
-        } else {
-          result
+    // Fail the backend futures if they take more than the timeout
+    withTimeout {
+      // Measures the wall clock time to execute the action
+      wallClockTimer.timeFuture {
+        val messages = messagesApi.preferred(request)
+        val postRequest = new PostRequest(request, messages)
+        block(postRequest).map { result =>
+          if (postRequest.method == "GET") {
+            result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
+          } else {
+            result
+          }
         }
       }
+    }.recoverWith {
+      case e: TimeoutException =>
+        logger.error(s"Future timeout on request $request", e)
+        Future.successful(Results.ServiceUnavailable)
     }
+  }
+
+  private def withTimeout[A](result: => Future[Result]): Future[Result] = {
+    val timeoutResult = akka.pattern.after(timeoutDuration, actorSystem.scheduler) {
+      val msg = s"Timeout after $timeoutDuration"
+      Future.failed(new TimeoutException(msg))
+    }(actorSystem.dispatchers.defaultGlobalDispatcher)
+
+    Future.firstCompletedOf(Seq(result, timeoutResult))
   }
 }
 
@@ -63,5 +85,6 @@ class PostAction @Inject()(config: PostActionConfig,
 class PostRequest[A](request: Request[A], val messages: Messages)
   extends WrappedRequest(request) {
   def flashSuccess: Option[String] = request.flash.get("success")
+
   def flashError: Option[String] = request.flash.get("error")
 }

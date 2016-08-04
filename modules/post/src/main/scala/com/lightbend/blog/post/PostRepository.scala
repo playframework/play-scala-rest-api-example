@@ -37,7 +37,7 @@ trait PostRepositoryLifecycle {
  * strongly typed execution context so that an inappropriate ExecutionContext can't
  * be used by accident.
  */
-class PostExecutionContext(val underlying: ExecutionContext) extends AnyVal
+class PostExecutionContext(val underlying: ExecutionContext)
 
 /**
  * A trivial implementation for the Post Repository.
@@ -63,14 +63,14 @@ class PostRepositoryImpl @Inject()(pec: PostExecutionContext) extends PostReposi
 
   override def list(): Future[Iterable[PostData]] = {
     Future {
-      logger.trace("list: ")
+      logger.trace(s"list: using ${ec}")
       postList
     }
   }
 
   override def get(id: PostId): Future[Option[PostData]] = {
     Future {
-      logger.trace(s"get: id = $id")
+      logger.trace(s"get: using ${ec} id = $id")
       postList.find(post => post.id == id)
     }
   }
