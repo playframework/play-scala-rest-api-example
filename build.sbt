@@ -24,6 +24,9 @@ lazy val root = (project in file(".")).enablePlugins(Common, PlayScala)
       // metrics library (used in PostAction)
       "nl.grons" %% "metrics-scala" % "3.5.4_a2.3",
 
+      // Add in a failsafe library
+      "net.jodah" % "failsafe" % "0.9.2",
+
       // Pull in play-bootstrap for twitter bootstrap form helper styling
       "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
       //play-bootstrap adds "org.webjars" % "bootstrap" % "3.3.6",
