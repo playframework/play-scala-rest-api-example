@@ -1,10 +1,11 @@
 package post
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent._
 import javax.inject.Inject
 
 import akka.actor.ActorSystem
 import com.codahale.metrics.MetricRegistry
+import net.jodah.failsafe._
 import nl.grons.metrics.scala.InstrumentedBuilder
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
@@ -37,6 +38,20 @@ class PostAction @Inject()(config: PostActionConfig,
 
   private val timeoutDuration = FiniteDuration(config.timeout.toMillis, TimeUnit.MILLISECONDS)
 
+  val scheduler: ScheduledExecutorService = {
+    Executors.newScheduledThreadPool(Runtime.getRuntime.availableProcessors)
+  }
+  
+  private val breaker = new CircuitBreaker()
+    .withFailureThreshold(3, 10)
+    .withSuccessThreshold(5)
+    .withDelay(1, TimeUnit.MINUTES)
+
+  def withCircuitBreaker[A]: Retry[A] = {
+    val policy = new RetryPolicy().withMaxRetries(0)
+    new Retry(Failsafe.`with`(policy).`with`(scheduler).`with`(breaker))
+  }
+
   override def invokeBlock[A](request: Request[A], block: PostRequestBlock[A]): Future[Result] = {
     if (logger.isTraceEnabled) {
       logger.trace(s"invokeBlock: request = $request")
@@ -47,19 +62,26 @@ class PostAction @Inject()(config: PostActionConfig,
 
     // Fail the backend futures if they take more than the timeout
     withTimeout {
-      // Measures the wall clock time to execute the action
-      wallClockTimer.timeFuture {
-        val messages = messagesApi.preferred(request)
-        val postRequest = new PostRequest(request, messages)
-        block(postRequest).map { result =>
-          if (postRequest.method == "GET") {
-            result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
-          } else {
-            result
+      // Wraps request in circuit breaker block (note: you may not want this for POST)
+      withCircuitBreaker {
+        // Measures the wall clock time to execute the action
+        wallClockTimer.timeFuture {
+          val messages = messagesApi.preferred(request)
+          val postRequest = new PostRequest(request, messages)
+          block(postRequest).map { result =>
+            if (postRequest.method == "GET") {
+              result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
+            } else {
+              result
+            }
           }
         }
       }
     }.recoverWith {
+      case e: CircuitBreakerOpenException =>
+        logger.warn(s"Circuit breaker open on request $request")
+        Future.successful(Results.ServiceUnavailable)
+
       case e: TimeoutException =>
         logger.error(s"Future timeout on request $request", e)
         Future.successful(Results.ServiceUnavailable)
@@ -71,7 +93,6 @@ class PostAction @Inject()(config: PostActionConfig,
       val msg = s"Timeout after $timeoutDuration"
       Future.failed(new TimeoutException(msg))
     }(actorSystem.dispatchers.defaultGlobalDispatcher)
-
     Future.firstCompletedOf(Seq(result, timeoutResult))
   }
 }
@@ -87,4 +108,23 @@ class PostRequest[A](request: Request[A], val messages: Messages)
   def flashSuccess: Option[String] = request.flash.get("success")
 
   def flashError: Option[String] = request.flash.get("error")
+}
+
+/**
+ * A helper class to turn a Failsafe call into a Scala future.
+ */
+class Retry[A](failsafe: => AsyncFailsafe[A]) {
+  def apply(runnable: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
+    import scala.compat.java8.FutureConverters._
+
+    try {
+      val callable = new Callable[CompletableFuture[A]]() {
+        def call(): CompletableFuture[A] = runnable.toJava.toCompletableFuture
+      }
+      failsafe.future(callable).toScala
+    } catch {
+      case e: CircuitBreakerOpenException =>
+        Future.failed(e)
+    }
+  }
 }

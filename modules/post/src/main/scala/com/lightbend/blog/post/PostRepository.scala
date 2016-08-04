@@ -1,5 +1,6 @@
 package com.lightbend.blog.post
 
+import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,14 +64,14 @@ class PostRepositoryImpl @Inject()(pec: PostExecutionContext) extends PostReposi
 
   override def list(): Future[Iterable[PostData]] = {
     Future {
-      logger.trace(s"list: using ${ec}")
+      logger.trace(s"list: ")
       postList
     }
   }
 
   override def get(id: PostId): Future[Option[PostData]] = {
     Future {
-      logger.trace(s"get: using ${ec} id = $id")
+      logger.trace(s"get: id = $id")
       postList.find(post => post.id == id)
     }
   }
