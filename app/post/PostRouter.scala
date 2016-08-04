@@ -8,6 +8,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
+import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -64,20 +65,8 @@ class PostRouter @Inject()(action: PostAction,
   }
 
   private def processPost[A]()(implicit request: PostRequest[A]): Future[Result] = {
-    // Match against the content type so we can behave like render.async
-    private object process {
-      case class Processing(mimeType: String) {
-        def unapply(request: RequestHeader): Boolean = {
-          request.contentType.contains(mimeType)
-        }
-      }
-
-      val Json = Processing(MimeTypes.JSON)
-      val Form = Processing(MimeTypes.FORM)
-    }
-
     request.contentType match {
-      case process.Json() =>
+      case Some(MimeTypes.JSON) =>
         form.bindFromRequest().fold(hasErrors = { badForm =>
           Future.successful {
             Results.BadRequest(badForm.errorsAsJson)
@@ -89,7 +78,7 @@ class PostRouter @Inject()(action: PostAction,
           }
         })
 
-      case process.Form() =>
+      case Some(MimeTypes.FORM) =>
         form.bindFromRequest().fold(hasErrors = { badForm =>
           Future.successful {
             Results.BadRequest(views.html.posts.create(badForm))
@@ -103,10 +92,7 @@ class PostRouter @Inject()(action: PostAction,
         })
 
       case other =>
-        // For input content, we want to send 415, when they send an unacceptable content type.
-        Future.successful {
-          Results.UnsupportedMediaType
-        }
+        Future.successful(UnsupportedMediaType)
     }
   }
 
