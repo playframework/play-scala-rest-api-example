@@ -1,6 +1,5 @@
 package com.lightbend.blog.post
 
-import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -9,6 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * A pure non-blocking interface for the PostRepository.
  */
 trait PostRepository {
+  def create(data: PostData): Future[PostId]
 
   def list(): Future[Iterable[PostData]]
 
@@ -73,6 +73,13 @@ class PostRepositoryImpl @Inject()(pec: PostExecutionContext) extends PostReposi
     Future {
       logger.trace(s"get: id = $id")
       postList.find(post => post.id == id)
+    }
+  }
+
+  def create(data: PostData): Future[PostId] = {
+    Future {
+      logger.trace(s"create: data = $data")
+      data.id
     }
   }
 

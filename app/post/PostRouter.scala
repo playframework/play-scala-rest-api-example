@@ -1,12 +1,16 @@
 package post
 
 import javax.inject.Inject
+import java.util.concurrent._
 
 import com.lightbend.blog.comment._
 import com.lightbend.blog.post._
+import circuitbreaker._
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.http.MimeTypes
+import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -24,8 +28,35 @@ case class PostFormInput(title: String, body: String)
  */
 class PostRouter @Inject()(action: PostAction,
                            postRepository: PostRepository,
-                           commentRepository: CommentRepository)(implicit ec: ExecutionContext)
-  extends SimpleRouter with RequestExtractors with Rendering {
+                           commentRepository: CommentRepository,
+                           lifecycle: ApplicationLifecycle)(implicit ec: ExecutionContext)
+  extends SimpleRouter with RequestExtractors with Rendering with CircuitBreaker {
+
+  val failsafeBuilder = new FailsafeBuilder {
+    import net.jodah.failsafe._
+
+    val scheduler: ScheduledExecutorService = {
+      val s = Executors.newScheduledThreadPool(2)
+      lifecycle.addStopHook(() => Future.successful(s.shutdown()))
+      s
+    }
+
+    val circuitBreaker = {
+      val breaker = new CircuitBreaker()
+        .withFailureThreshold(3)
+        .withSuccessThreshold(1)
+        .withDelay(5, TimeUnit.SECONDS)
+      breaker
+    }
+
+    def sync[R]: SyncFailsafe[R] = {
+      Failsafe.`with`(circuitBreaker)
+    }
+
+    def async[R]: AsyncFailsafe[R] = {
+      sync.`with`(scheduler)
+    }
+  }
 
   private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
 
@@ -96,14 +127,6 @@ class PostRouter @Inject()(action: PostAction,
     }
   }
 
-  private def createPost[A](postInput: PostFormInput)(implicit request: PostRequest[A]): Future[Post] = {
-    logger.trace(s"createPost: postInput = $postInput")
-    Future.successful {
-      val id = PostId("999")
-      Post(id.toString(), Post.link(id), "fake title", "fake body", Seq.empty)
-    }
-  }
-
   private def renderPost[A](id: PostId)(implicit request: PostRequest[A]): Future[Result] = {
     logger.trace("renderPost: ")
     // Find a single item from the repository
@@ -111,7 +134,7 @@ class PostRouter @Inject()(action: PostAction,
 
       case Accepts.Json() & Accepts.Html() if request.method == "HEAD" =>
         // Do not render a body on HEAD
-        postRepository.get(id).flatMap {
+        findPost(id).flatMap {
           case Some(p) =>
             Future.successful(Results.Ok)
           case None =>
@@ -119,7 +142,7 @@ class PostRouter @Inject()(action: PostAction,
         }
 
       case Accepts.Json() =>
-        postRepository.get(id).flatMap {
+        findPost(id).flatMap {
           case Some(p) =>
             findComments(p.id).map { comments =>
               val post = Post(p, comments)
@@ -131,7 +154,7 @@ class PostRouter @Inject()(action: PostAction,
         }
 
       case Accepts.Html() =>
-        postRepository.get(id).flatMap {
+        findPost(id).flatMap {
           case Some(p) =>
             findComments(p.id).map { comments =>
               val post = Post(p, comments)
@@ -153,40 +176,57 @@ class PostRouter @Inject()(action: PostAction,
 
       case Accepts.Json() =>
         // Query the repository for available posts
-        postRepository.list().flatMap { postDataList =>
-          findPosts(postDataList).map { posts =>
-            val json = Json.toJson(posts)
-            Results.Ok(json)
-          }
+        findPosts().map { posts =>
+          val json = Json.toJson(posts)
+          Results.Ok(json)
         }
 
       case Accepts.Html() =>
         // Query the repository for available posts
-        postRepository.list().flatMap { postDataList =>
-          findPosts(postDataList).map { posts =>
-            Results.Ok(views.html.posts.index(posts, form))
+        findPosts().map { posts =>
+          Results.Ok(views.html.posts.index(posts, form))
+        }
+    }
+  }
+
+  private def createPost[A](postInput: PostFormInput): Future[Post] = {
+    breaker.async { _ =>
+      val data = PostData(PostId("999"), postInput.title, postInput.body)
+      // we don't actually create the post, so return what we have
+      postRepository.create(data).map { id =>
+        Post(data, Seq.empty)
+      }
+    }
+  }
+
+  private def findPost[A](id: PostId): Future[Option[PostData]] = {
+    breaker.async { _ =>
+      postRepository.get(id)
+    }
+  }
+
+  private def findPosts(): Future[Iterable[Post]] = {
+    breaker.async { _ =>
+      postRepository.list().flatMap { postDataList =>
+        // Get an Iterable[Future[Post]] containing comments
+        val listOfFutures = postDataList.map { p =>
+          findComments(p.id).map { comments =>
+            Post(p, comments)
           }
         }
 
-    }
-  }
-
-  private def findPosts(postDataList: Iterable[PostData]): Future[Iterable[Post]] = {
-    // Get an Iterable[Future[Post]] containing comments
-    val listOfFutures = postDataList.map { p =>
-      findComments(p.id).map { comments =>
-        Post(p, comments)
+        // Flip it into a single Future[Iterable[Post]]
+        Future.sequence(listOfFutures)
       }
     }
-
-    // Flip it into a single Future[Iterable[Post]]
-    Future.sequence(listOfFutures)
   }
 
   private def findComments(postId: PostId): Future[Seq[Comment]] = {
-    // Find all the comments for this post
-    commentRepository.findByPost(postId.toString).map { comments =>
-      comments.map(c => Comment(c.body)).toSeq
+    breaker.async { _ =>
+      // Find all the comments for this post
+      commentRepository.findByPost(postId.toString).map { comments =>
+        comments.map(c => Comment(c.body)).toSeq
+      }
     }
   }
 
