@@ -10,8 +10,6 @@ import play.api.inject.ApplicationLifecycle
 import play.api.{Configuration, Environment}
 import post.PostActionConfig
 
-import scala.concurrent.Future
-
 /**
  * Sets up custom components for Play.
  *

@@ -3,6 +3,7 @@ import javax.inject.{Inject, Provider, Singleton}
 import play.api._
 import play.api.http.Status._
 import play.api.http.{ContentTypes, DefaultHttpErrorHandler, HttpErrorHandlerExceptions}
+import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.routing.Router
@@ -22,7 +23,7 @@ class ErrorHandler(environment: Environment,
                    configuration: Configuration,
                    sourceMapper: Option[SourceMapper] = None,
                    optionRouter: => Option[Router] = None)
-  extends DefaultHttpErrorHandler(environment, configuration, sourceMapper, optionRouter) {
+  extends DefaultHttpErrorHandler(environment, configuration, sourceMapper, optionRouter) with RequestExtractors with Rendering {
 
   private val logger = org.slf4j.LoggerFactory.getLogger("application.ErrorHandler")
 
@@ -38,22 +39,46 @@ class ErrorHandler(environment: Environment,
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     logger.debug(s"onClientError: statusCode = $statusCode, uri = ${request.uri}, message = $message")
 
-    Future.successful {
-      val result = statusCode match {
-        case BAD_REQUEST =>
-          Results.BadRequest(message)
-        case FORBIDDEN =>
-          Results.Forbidden(message)
-        case NOT_FOUND =>
-          Results.NotFound(message)
-        case clientError if statusCode >= 400 && statusCode < 500 =>
-          Results.Status(statusCode)
-        case nonClientError =>
-          val msg = s"onClientError invoked with non client error status code $statusCode: $message"
-          throw new IllegalArgumentException(msg)
-      }
-      result
-    }
+    render.async {
+      case Accepts.Json() =>
+        Future.successful {
+          val result = statusCode match {
+            case BAD_REQUEST =>
+              Results.BadRequest(message)
+            case FORBIDDEN =>
+              Results.Forbidden(message)
+            case NOT_FOUND =>
+              Results.NotFound(message)
+            case clientError if statusCode >= 400 && statusCode < 500 =>
+              Results.Status(statusCode)
+            case nonClientError =>
+              val msg = s"onClientError invoked with non client error status code $statusCode: $message"
+              throw new IllegalArgumentException(msg)
+          }
+          result
+        }
+      case Accepts.Html() =>
+        super.onClientError(request, statusCode, message)
+    }(request)
   }
 
+  override protected def onDevServerError(request: RequestHeader, exception: UsefulException): Future[Result] = {
+    render.async {
+      case Accepts.Json() =>
+        Future.successful(InternalServerError(Json.obj("exception" -> exception.toString)))
+
+      case Accepts.Html() =>
+        super.onDevServerError(request, exception)
+    }(request)
+  }
+
+  override protected def onProdServerError(request: RequestHeader, exception: UsefulException): Future[Result] = {
+    render.async {
+      case Accepts.Json() =>
+        Future.successful(InternalServerError)
+
+      case Accepts.Html() =>
+        super.onProdServerError(request, exception)
+    }(request)
+  }
 }
