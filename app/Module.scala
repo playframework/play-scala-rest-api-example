@@ -1,6 +1,8 @@
-import javax.inject._
+import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
+import javax.inject.{Inject, _}
 
 import akka.actor.ActorSystem
+import circuitbreaker.FailsafeBuilder
 import com.codahale.metrics.MetricRegistry
 import com.google.inject.AbstractModule
 import com.lightbend.blog.comment._
@@ -9,6 +11,8 @@ import filters._
 import play.api.inject.ApplicationLifecycle
 import play.api.{Configuration, Environment}
 import post.PostActionConfig
+
+import scala.concurrent.Future
 
 /**
  * Sets up custom components for Play.
@@ -29,6 +33,7 @@ class Module(environment: Environment,
 
     // Set up the configuration for the PostAction
     bind(classOf[PostActionConfig]).toProvider(classOf[PostActionConfigProvider])
+    bind(classOf[FailsafeBuilder]).toProvider(classOf[FailsafeBuilderProvider])
 
     // Hook in the coda hale metrics classes
     bind(classOf[MetricRegistry]).toProvider(classOf[MetricRegistryProvider])
@@ -115,3 +120,33 @@ class MetricRegistryProvider extends Provider[MetricRegistry] {
   lazy val get = new MetricRegistry()
 }
 
+@Singleton
+class FailsafeBuilderProvider @Inject()(lifecycle: ApplicationLifecycle)
+  extends Provider[FailsafeBuilder] {
+
+  lazy val get = new FailsafeBuilder {
+    import net.jodah.failsafe._
+
+    val scheduler: ScheduledExecutorService = {
+      val s = Executors.newScheduledThreadPool(2)
+      lifecycle.addStopHook(() => Future.successful(s.shutdown()))
+      s
+    }
+
+    val circuitBreaker = {
+      val breaker = new CircuitBreaker()
+        .withFailureThreshold(3)
+        .withSuccessThreshold(1)
+        .withDelay(5, TimeUnit.SECONDS)
+      breaker
+    }
+
+    def sync[R]: SyncFailsafe[R] = {
+      Failsafe.`with`(circuitBreaker)
+    }
+
+    def async[R]: AsyncFailsafe[R] = {
+      sync.`with`(scheduler)
+    }
+  }
+}
