@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import akka.actor.ActorSystem
 import com.codahale.metrics.MetricRegistry
-import net.jodah.failsafe._
+import net.jodah.failsafe.CircuitBreakerOpenException
 import nl.grons.metrics.scala.InstrumentedBuilder
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
@@ -53,10 +53,11 @@ class PostAction @Inject()(config: PostActionConfig,
         val messages = messagesApi.preferred(request)
         val postRequest = new PostRequest(request, messages)
         block(postRequest).map { result =>
-          if (postRequest.method == "GET") {
-            result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
-          } else {
-            result
+          postRequest.method match {
+            case "GET" | "HEAD" =>
+              result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
+            case other =>
+              result
           }
         }
       }
@@ -81,7 +82,7 @@ class PostAction @Inject()(config: PostActionConfig,
 }
 
 /**
- * A wrapped request that can contain Post information.
+ * A wrapped request for post resources.
  *
  * This is commonly used to hold request-specific information like
  * security credentials, and useful shortcut methods.
