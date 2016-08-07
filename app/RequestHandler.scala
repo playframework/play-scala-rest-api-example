@@ -10,6 +10,7 @@ import play.api.routing.Router
  * https://www.playframework.com/documentation/2.5.x/ScalaHttpRequestHandlers#extending-the-default-request-handler
  */
 class RequestHandler @Inject()(router: Router,
+                               postRouter: post.PostRouter,
                                errorHandler: HttpErrorHandler,
                                configuration: HttpConfiguration,
                                filters: HttpFilters)
@@ -18,7 +19,7 @@ class RequestHandler @Inject()(router: Router,
   override def handlerForRequest(request: RequestHeader): (RequestHeader, Handler) = {
     super.handlerForRequest {
       // ensures that REST API does not need a trailing "/"
-      if (request.uri.startsWith("/posts")) {
+      if (request.uri.startsWith(postRouter.prefix)) {
         addTrailingSlash(request)
       } else {
         request

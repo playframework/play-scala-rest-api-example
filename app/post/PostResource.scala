@@ -1,6 +1,5 @@
 package post
 
-import com.lightbend.blog.post.{PostData, PostId}
 import play.api.libs.json._
 
 
@@ -27,7 +26,11 @@ object CommentResource {
 /**
  * DTO for displaying post information.
  */
-case class PostResource(id: String, link: String, title: String, body: String, comments: Seq[CommentResource])
+case class PostResource(id: String,
+                        link: String,
+                        title: String,
+                        body: String,
+                        comments: Seq[CommentResource])
 
 object PostResource {
 
@@ -44,16 +47,6 @@ object PostResource {
         "comments" -> Json.toJson(post.comments)
       )
     }
-  }
-
-  def apply(p: PostData, comments: Seq[CommentResource]): PostResource = {
-    PostResource(p.id.toString, link(p.id), p.title, p.body, comments)
-  }
-
-  def link(id: PostId): String = {
-    import com.netaporter.uri.dsl._
-    val url = "/posts" / id.toString
-    url.toString()
   }
 
 }

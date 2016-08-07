@@ -2,15 +2,24 @@ package post
 
 import javax.inject.Inject
 
+import com.lightbend.blog.post.PostId
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 /**
- * Routes to the post controller.
+ * Routes and URLs to the PostResource controller.
  */
 class PostRouter @Inject()(controller: PostController)
   extends SimpleRouter {
+
+  val prefix = "/posts"
+
+  def link(id: PostId): String = {
+    import com.netaporter.uri.dsl._
+    val url = prefix / id.toString
+    url.toString()
+  }
 
   // Here, we want to route a function to a controller method,
   // without calling the method directly.  Methods in Scala are

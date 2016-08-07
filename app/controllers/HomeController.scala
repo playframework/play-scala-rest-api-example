@@ -1,11 +1,14 @@
 package controllers
 
-import play.api.mvc.{Action, Controller}
+import javax.inject.Inject
 
-class HomeController extends Controller {
+import play.api.mvc.{Action, Controller}
+import post.PostRouter
+
+class HomeController @Inject()(postRouter: PostRouter) extends Controller {
 
   def index = Action { implicit request =>
-    Ok(views.html.index())
+    Ok(views.html.index(postRouter))
   }
 
 }

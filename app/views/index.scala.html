@@ -1,4 +1,4 @@
-@()(implicit request: Request[_])
+@(router: post.PostRouter)(implicit request: Request[_])
 
 @main("REST API") {
   <div class="header">
@@ -6,6 +6,6 @@
   </div>
 
   <ul>
-    <li><a href="/posts">/posts</a></li>
+    <li><a href="@{router.prefix}">@{router.prefix}</a></li>
   </ul>
 }
