@@ -1,6 +1,6 @@
 package post
 
-import javax.inject.Inject
+import javax.inject.{Inject, Provider}
 
 import circuitbreaker._
 import com.lightbend.blog.comment._
@@ -11,7 +11,8 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
  * Controls access to the repositories, returning [[PostResource]] and [[CommentResource]].
  */
-class PostResourceHandler @Inject()(postRepository: PostRepository,
+class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
+                                    postRepository: PostRepository,
                                     commentRepository: CommentRepository,
                                     val failsafeBuilder: FailsafeBuilder)
                                    (implicit ec: ExecutionContext)
@@ -25,7 +26,7 @@ class PostResourceHandler @Inject()(postRepository: PostRepository,
     breaker.async { _ =>
       // We don't actually create the post, so return what we have
       postRepository.create(data).map { id =>
-        PostResource(data, Seq.empty)
+        createPost(data, Seq.empty)
       }
     }
   }
@@ -39,7 +40,7 @@ class PostResourceHandler @Inject()(postRepository: PostRepository,
       val commentsFuture = findComments(id)
       postFuture.flatMap { maybePostData =>
         commentsFuture.map { comments =>
-          maybePostData.map(PostResource(_, comments))
+          maybePostData.map(createPost(_, comments))
         }
       }
     }
@@ -54,7 +55,7 @@ class PostResourceHandler @Inject()(postRepository: PostRepository,
         // Get an Iterable[Future[Post]] containing comments
         val listOfFutures = postDataList.map { p =>
           findComments(p.id.toString).map { comments =>
-            PostResource(p, comments)
+            createPost(p, comments)
           }
         }
 
@@ -74,6 +75,10 @@ class PostResourceHandler @Inject()(postRepository: PostRepository,
         comments.map(c => CommentResource(c.body)).toSeq
       }
     }
+  }
+
+  private def createPost(p: PostData, comments: Seq[CommentResource]): PostResource = {
+    PostResource(p.id.toString, routerProvider.get.link(p.id), p.title, p.body, comments)
   }
 
 }
