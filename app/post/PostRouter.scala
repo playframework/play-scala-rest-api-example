@@ -21,23 +21,15 @@ class PostRouter @Inject()(controller: PostController)
     url.toString()
   }
 
-  // Here, we want to route a function to a controller method,
-  // without calling the method directly.  Methods in Scala are
-  // not values, but functions are, so we use eta expansion (the
-  // trailing underscore) to do the conversion.
-
   override def routes: Routes = {
     case GET(p"/") =>
-      val f = controller.index _
-      f()
+      controller.index
 
     case POST(p"/") =>
-      val f = controller.process _
-      f()
+      controller.process
 
     case GET(p"/$id") =>
-      val f = controller.show _
-      f(id)
+      controller.show(id)
   }
 
 }
