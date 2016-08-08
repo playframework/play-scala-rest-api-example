@@ -83,7 +83,7 @@ class PostController @Inject()(action: PostAction,
     def success(input: PostFormInput) = {
       handler.create(input).map { post =>
         Created(Json.toJson(post))
-          .withHeaders("Location" -> post.link)
+          .withHeaders(LOCATION -> post.link)
       }
     }
 

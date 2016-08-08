@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import com.codahale.metrics.MetricRegistry
 import net.jodah.failsafe.CircuitBreakerOpenException
 import nl.grons.metrics.scala.InstrumentedBuilder
+import play.api.http.HttpVerbs
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
 
@@ -24,7 +25,7 @@ class PostAction @Inject()(config: PostActionConfig,
                            messagesApi: MessagesApi,
                            actorSystem: ActorSystem,
                            val metricRegistry: MetricRegistry)(implicit ec: ExecutionContext)
-  extends ActionBuilder[PostRequest] with InstrumentedBuilder {
+  extends ActionBuilder[PostRequest] with InstrumentedBuilder with HttpVerbs {
 
   type PostRequestBlock[A] = (PostRequest[A]) => Future[Result]
 
@@ -54,7 +55,7 @@ class PostAction @Inject()(config: PostActionConfig,
         val postRequest = new PostRequest(request, messages)
         block(postRequest).map { result =>
           postRequest.method match {
-            case "GET" | "HEAD" =>
+            case GET | HEAD =>
               result.withHeaders(("Cache-Control", s"max-age: $maxAge"))
             case other =>
               result
