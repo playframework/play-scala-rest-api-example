@@ -1,3 +1,4 @@
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import javax.inject.{Inject, _}
 
@@ -121,10 +122,12 @@ class MetricRegistryProvider extends Provider[MetricRegistry] {
 }
 
 @Singleton
-class FailsafeBuilderProvider @Inject()(lifecycle: ApplicationLifecycle)
+class FailsafeBuilderProvider @Inject()(config: PostActionConfig,
+                                        lifecycle: ApplicationLifecycle)
   extends Provider[FailsafeBuilder] {
 
   lazy val get = new FailsafeBuilder {
+
     import net.jodah.failsafe._
 
     val scheduler: ScheduledExecutorService = {
@@ -138,6 +141,7 @@ class FailsafeBuilderProvider @Inject()(lifecycle: ApplicationLifecycle)
         .withFailureThreshold(3)
         .withSuccessThreshold(1)
         .withDelay(5, TimeUnit.SECONDS)
+        .withTimeout(config.timeout.toMillis, TimeUnit.MILLISECONDS)
       breaker
     }
 
