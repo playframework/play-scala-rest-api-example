@@ -27,7 +27,10 @@ lazy val root = (project in file(".")).enablePlugins(Common, PlayScala)
       // Add in a failsafe library
       "net.jodah" % "failsafe" % "0.9.2",
 
-      // Pull in play-bootstrap for twitter bootstrap form helper styling
+      // Use scala-guice
+      "net.codingwell" %% "scala-guice" % "4.1.0",
+
+// Pull in play-bootstrap for twitter bootstrap form helper styling
       "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3"
       //play-bootstrap adds "org.webjars" % "bootstrap" % "3.3.6",
       //play-bootstrap adds "org.webjars" % "jquery" % "2.2.3"
