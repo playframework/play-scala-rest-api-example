@@ -2,7 +2,6 @@ import java.util.concurrent._
 import javax.inject._
 
 import akka.actor.ActorSystem
-import circuitbreaker.FailsafeBuilder
 import com.codahale.metrics._
 import com.google.inject.AbstractModule
 import com.lightbend.blog.comment._
@@ -38,7 +37,6 @@ class Module(environment: Environment,
 
     // Set up the configuration for the PostAction
     bind[PostActionConfig].toProvider[PostActionConfigProvider].in[Singleton]
-    bind[FailsafeBuilder].toProvider[FailsafeBuilderProvider].in[Singleton]
 
     // Hook in coda hale metrics
     bind[MetricRegistry].toProvider[MetricRegistryProvider].asEagerSingleton()
@@ -154,38 +152,4 @@ object Module {
       registry
     }
   }
-
-  private class FailsafeBuilderProvider @Inject()(config: PostActionConfig,
-                                                  lifecycle: ApplicationLifecycle)
-    extends Provider[FailsafeBuilder] {
-
-    override def get = new FailsafeBuilder {
-
-      import net.jodah.failsafe._
-
-      val scheduler: ScheduledExecutorService = {
-        val s = Executors.newScheduledThreadPool(2)
-        lifecycle.addStopHook(() => Future.successful(s.shutdown()))
-        s
-      }
-
-      val circuitBreaker = {
-        val breaker = new CircuitBreaker()
-          .withFailureThreshold(3)
-          .withSuccessThreshold(1)
-          .withDelay(5, TimeUnit.SECONDS)
-          .withTimeout(config.timeout.toMillis, TimeUnit.MILLISECONDS)
-        breaker
-      }
-
-      def sync[R]: SyncFailsafe[R] = {
-        Failsafe.`with`(circuitBreaker)
-      }
-
-      def async[R]: AsyncFailsafe[R] = {
-        sync.`with`(scheduler)
-      }
-    }
-  }
-
 }
