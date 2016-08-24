@@ -2,73 +2,41 @@ package post
 
 import javax.inject.{Inject, Provider}
 
-import com.lightbend.blog.comment._
-import com.lightbend.blog.post._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * Controls access to the repositories, returning [[PostResource]] and [[CommentResource]].
+ * Controls access to the repositories, returning [[PostResource]]
  */
 class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
-                                    postRepository: PostRepository,
-                                    commentRepository: CommentRepository)
+                                    postRepository: PostRepository)
                                    (implicit ec: ExecutionContext)
 {
 
-  /**
-   * Creates a post in the repository.
-   */
   def create[A](postInput: PostFormInput): Future[PostResource] = {
     val data = PostData(PostId("999"), postInput.title, postInput.body)
     // We don't actually create the post, so return what we have
     postRepository.create(data).map { id =>
-      createPost(data, Seq.empty)
+      createPostResource(data)
     }
   }
 
-  /**
-   * Looks up a single Post from the repository.
-   */
   def lookup[A](id: String): Future[Option[PostResource]] = {
-      val postFuture = postRepository.get(PostId(id))
-      val commentsFuture = findComments(id)
-      postFuture.flatMap { maybePostData =>
-        commentsFuture.map { comments =>
-          maybePostData.map(createPost(_, comments))
-        }
+    val postFuture = postRepository.get(PostId(id))
+    postFuture.map { maybePostData =>
+      maybePostData.map { postData =>
+        createPostResource(postData)
       }
+    }
   }
 
-  /**
-   * Finds all posts.
-   */
   def find: Future[Iterable[PostResource]] = {
-    postRepository.list().flatMap { postDataList =>
-      // Get an Iterable[Future[Post]] containing comments
-      val listOfFutures = postDataList.map { p =>
-        findComments(p.id.toString).map { comments =>
-          createPost(p, comments)
-        }
-      }
-
-      // Flip it into a single Future[Iterable[Post]]
-      Future.sequence(listOfFutures)
+    postRepository.list().map { postDataList =>
+      postDataList.map(postData => createPostResource(postData))
     }
   }
 
-  /**
-   * Finds comments in the repository.
-   */
-  private def findComments(postId: String): Future[Seq[CommentResource]] = {
-    // Find all the comments for this post
-    commentRepository.findByPost(postId.toString).map { comments =>
-      comments.map(c => CommentResource(c.body)).toSeq
-    }
-  }
-
-  private def createPost(p: PostData, comments: Seq[CommentResource]): PostResource = {
-    PostResource(p.id.toString, routerProvider.get.link(p.id), p.title, p.body, comments)
+  private def createPostResource(p: PostData): PostResource = {
+    PostResource(p.id.toString, routerProvider.get.link(p.id), p.title, p.body)
   }
 
 }

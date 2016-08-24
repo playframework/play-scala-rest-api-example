@@ -2,7 +2,6 @@ package post
 
 import javax.inject.Inject
 
-import com.lightbend.blog.post.PostId
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
