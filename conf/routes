@@ -1,6 +1,3 @@
-
-GET        /                    controllers.HomeController.index()
-
 ->         /posts               post.PostRouter
 
 # Map static resources from the /public folder to the /assets URL path

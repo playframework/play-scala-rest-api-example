@@ -35,13 +35,6 @@
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 
-  <logger name="post" level="TRACE" />
-  <logger name="com.lightbend.blog" level="TRACE" />
-
-  <logger name="metrics" level="INFO" additivity="false">
-    <appender-ref ref="METRICS" />
-  </logger>
-
   <root level="WARN">
     <appender-ref ref="ASYNCFILE" />
     <appender-ref ref="ASYNCSTDOUT" />
