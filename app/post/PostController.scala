@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 case class PostFormInput(title: String, body: String)
 
 /**
- * Takes HTTP requests and produces JSON or HTML encoded HTTP responses.
+ * Takes HTTP requests and produces JSON.
  */
 class PostController @Inject()(action: PostAction,
                                handler: PostResourceHandler)
@@ -32,45 +32,21 @@ class PostController @Inject()(action: PostAction,
   def index: Action[AnyContent] = {
     action.async { implicit request =>
       handler.find.map { posts =>
-        render {
-          case Accepts.Json() =>
-            Ok(Json.toJson(posts))
-
-          case Accepts.Html() =>
-            Ok(views.html.posts.index(posts, form))
-        }
+        Ok(Json.toJson(posts))
       }
     }
   }
 
   def process: Action[AnyContent] = {
     action.async { implicit request =>
-      request.contentType match {
-        case Some(JSON) =>
-          processJsonPost()
-
-        case Some(FORM) =>
-          processHtmlPost()
-
-        case other =>
-          Future.successful(UnsupportedMediaType)
-      }
+      processJsonPost()
     }
   }
 
   def show(id: String): Action[AnyContent] = {
     action.async { implicit request =>
-      handler.lookup(id).map {
-        case Some(post) =>
-          render {
-            case Accepts.Json() =>
-              Ok(Json.toJson(post))
-            case Accepts.Html() =>
-              Ok(views.html.posts.show(post))
-          }
-
-        case None =>
-          NotFound
+      handler.lookup(id).map { post =>
+        Ok(Json.toJson(post))
       }
     }
   }
@@ -89,25 +65,6 @@ class PostController @Inject()(action: PostAction,
 
     form.bindFromRequest().fold(failure, success)
   }
-
-  private def processHtmlPost[A]()(implicit request: PostRequest[A]): Future[Result] = {
-    def failure(badForm: Form[PostFormInput]) = {
-      Future.successful {
-        BadRequest(views.html.posts.create(badForm))
-          .withFlashError("Could not create post!")
-      }
-    }
-
-    def success(input: PostFormInput) = {
-      handler.create(input).map { post =>
-        Redirect(request.uri)
-          .withFlashSuccess(s"Created post $post")
-      }
-    }
-
-    form.bindFromRequest().fold(failure, success)
-  }
-
 }
 
 

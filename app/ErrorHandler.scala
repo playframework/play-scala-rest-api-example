@@ -39,46 +39,29 @@ class ErrorHandler(environment: Environment,
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     logger.debug(s"onClientError: statusCode = $statusCode, uri = ${request.uri}, message = $message")
 
-    render.async {
-      case Accepts.Json() =>
-        Future.successful {
-          val result = statusCode match {
-            case BAD_REQUEST =>
-              Results.BadRequest(message)
-            case FORBIDDEN =>
-              Results.Forbidden(message)
-            case NOT_FOUND =>
-              Results.NotFound(message)
-            case clientError if statusCode >= 400 && statusCode < 500 =>
-              Results.Status(statusCode)
-            case nonClientError =>
-              val msg = s"onClientError invoked with non client error status code $statusCode: $message"
-              throw new IllegalArgumentException(msg)
-          }
-          result
-        }
-      case Accepts.Html() =>
-        super.onClientError(request, statusCode, message)
-    }(request)
+    Future.successful {
+      val result = statusCode match {
+        case BAD_REQUEST =>
+          Results.BadRequest(message)
+        case FORBIDDEN =>
+          Results.Forbidden(message)
+        case NOT_FOUND =>
+          Results.NotFound(message)
+        case clientError if statusCode >= 400 && statusCode < 500 =>
+          Results.Status(statusCode)
+        case nonClientError =>
+          val msg = s"onClientError invoked with non client error status code $statusCode: $message"
+          throw new IllegalArgumentException(msg)
+      }
+      result
+    }
   }
 
   override protected def onDevServerError(request: RequestHeader, exception: UsefulException): Future[Result] = {
-    render.async {
-      case Accepts.Json() =>
-        Future.successful(InternalServerError(Json.obj("exception" -> exception.toString)))
-
-      case Accepts.Html() =>
-        super.onDevServerError(request, exception)
-    }(request)
+    Future.successful(InternalServerError(Json.obj("exception" -> exception.toString)))
   }
 
   override protected def onProdServerError(request: RequestHeader, exception: UsefulException): Future[Result] = {
-    render.async {
-      case Accepts.Json() =>
-        Future.successful(InternalServerError)
-
-      case Accepts.Html() =>
-        super.onProdServerError(request, exception)
-    }(request)
+    Future.successful(InternalServerError)
   }
 }
