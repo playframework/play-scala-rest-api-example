@@ -3,7 +3,7 @@ import sbt.Keys._
 // The Play project itself, which aggregates everything.
 lazy val root = (project in file(".")).enablePlugins(Common, PlayScala)
   .settings(
-    name := """rest-api""",
+    name := """play-rest-api""",
     libraryDependencies ++= Seq(
       // A useful URL construction library
       "com.netaporter" %% "scala-uri" % "0.4.14",
