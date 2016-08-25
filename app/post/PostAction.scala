@@ -46,5 +46,6 @@ class PostAction @Inject()(messagesApi: MessagesApi)(implicit ec: ExecutionConte
  * This is commonly used to hold request-specific information like
  * security credentials, and useful shortcut methods.
  */
-class PostRequest[A](request: Request[A], val messages: Messages) extends WrappedRequest(request) {
+class PostRequest[A](request: Request[A], val messages: Messages)
+  extends WrappedRequest(request) {
 }
