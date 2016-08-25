@@ -33,14 +33,14 @@ object PostResource {
 }
 
 /**
- * Controls access to the repositories, returning [[PostResource]]
+ * Controls access to the backend data, returning [[PostResource]]
  */
 class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
                                     postRepository: PostRepository)
                                    (implicit ec: ExecutionContext)
 {
 
-  def create[A](postInput: PostFormInput): Future[PostResource] = {
+  def create(postInput: PostFormInput): Future[PostResource] = {
     val data = PostData(PostId("999"), postInput.title, postInput.body)
     // We don't actually create the post, so return what we have
     postRepository.create(data).map { id =>
@@ -48,7 +48,7 @@ class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
     }
   }
 
-  def lookup[A](id: String): Future[Option[PostResource]] = {
+  def lookup(id: String): Future[Option[PostResource]] = {
     val postFuture = postRepository.get(PostId(id))
     postFuture.map { maybePostData =>
       maybePostData.map { postData =>
