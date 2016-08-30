@@ -1,7 +1,13 @@
 import sbt.Keys._
 
+lazy val GatlingTest = config("gatling") extend Test
+
+scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
+
 // The Play project itself, which aggregates everything.
-lazy val root = (project in file(".")).enablePlugins(Common, PlayScala)
+lazy val root = (project in file(".")).enablePlugins(Common, PlayScala, GatlingPlugin)
+  .configs(GatlingTest)
+  .settings(inConfig(GatlingTest)(Defaults.testSettings): _*)
   .settings(
     name := """play-rest-api""",
     libraryDependencies ++= Seq(
