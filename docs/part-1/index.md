@@ -93,7 +93,9 @@ GET("/" ? q_?"sort=$sort" & q_?”count=${ int(count) }")
 ```
 
 Cake Solutions covers SIRD in more depth in a fantastic blog post.
-Controlling Representation with Controller
+
+## Controlling Representation with Controller
+
 The PostRouter has a PostController injected into it through standard JSR-330 dependency injection.  A controller handles the work of processing the HTTP request into an HTTP response in the context of an Action: it's where page rendering and HTML form processing happen.  A controller typically extends play.api.mvc.Controller, which contains a number of utility methods and constants for working with HTTP.  In particular, a Controller contains Result objects such as Ok and Redirect, and HeaderNames like ACCEPT.
 
 A controller produces an Action, which provides the "engine" to Play.  Using the action, the controller passes in a block of code that takes a request passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a Result, or a Future[Result], depending on whether or not the action was called as "action { ... }" or "action.async { ... }".
@@ -241,7 +243,7 @@ class PostController @Inject()(handler: PostResourceHandler)
 
 The PostController relies on dependency injection to provide it with a PostResourceHandler, which provides the PostResource to the controller and handles the mapping internally.
 
-### Managing Actions with ActionBuilder
+## Managing Actions with ActionBuilder
 
 We saw in the PostController that each method is connected to an Action through the "action.async" method:
 
@@ -362,7 +364,7 @@ class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
 }
 ```
 
-Here's, it's a straight conversion in createPostResource, with the only hook being that the router provides the resource's URL, since it's something that PostData doesn't have itself.
+Here, it's a straight conversion in createPostResource, with the only hook being that the router provides the resource's URL, since it's something that PostData doesn't have itself.
 
 ## Rendering Content as JSON
 
@@ -467,5 +469,3 @@ Once the test completes, you'll see an HTML file containing the load test chart:
  ./rest-api/target/gatling/gatlingspec-1472579540405/index.html
 
 That will contain your load test results.
-
-
