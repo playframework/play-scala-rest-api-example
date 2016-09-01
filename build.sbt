@@ -2,8 +2,6 @@ import sbt.Keys._
 
 lazy val GatlingTest = config("gatling") extend Test
 
-scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
-
 // The Play project itself, which aggregates everything.
 lazy val root = (project in file(".")).enablePlugins(Common, PlayScala, GatlingPlugin)
   .configs(GatlingTest)
@@ -16,5 +14,8 @@ lazy val root = (project in file(".")).enablePlugins(Common, PlayScala, GatlingP
 
       // Use scala-guice
       "net.codingwell" %% "scala-guice" % "4.1.0"
-    )
+    ),
+    scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
   )
+
+lazy val docs = (project in file("docs")).enablePlugins(ParadoxPlugin)
