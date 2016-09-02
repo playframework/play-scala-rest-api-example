@@ -27,13 +27,6 @@ object Common extends AutoPlugin {
     ),
     scalaVersion := "2.11.8",
     scalacOptions in Test ++= Seq("-Yrangepos"),
-    autoAPIMappings := true,
-    libraryDependencies ++= Seq(
-      "javax.inject" % "javax.inject" % "1",
-      "org.slf4j" % "slf4j-api" % "1.7.21",
-      "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
-      "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % Test,
-      "io.gatling" % "gatling-test-framework" % "2.2.2" % Test
-    )
+    autoAPIMappings := true
   )
 }
