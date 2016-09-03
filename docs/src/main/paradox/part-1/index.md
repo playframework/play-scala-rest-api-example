@@ -1,24 +1,24 @@
 # Making a REST API with Play
 
-This guide will walk you through how to make a RESTful API with JSON using Play 2.5.
+This guide will walk you through how to make a RESTful API with JSON using [Play 2.5](https://playframework.com).
 
-We’ll demonstrate with a “best practices” REST API that you can clone from http://github.com/playframework/play-rest-api -- this example is in Scala, but Play also has a Java API which looks and acts just like the Scala API. 
+We’ll demonstrate with a “best practices” REST API that you can clone from [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api) -- this example is in Scala, but Play also has a Java API which looks and acts just like the Scala API. 
 
 Note that there’s more involved in a REST API -- monitoring, representation, and managing access to back end resources -- that we'll cover in subsequent posts.  But first, let's address why Play is so effective as a REST API.
 
 ## Why use Play as a REST API?
 
-Because Play is built on reactive bedrock.  Play starts from a reactive core, and builds on reactive principles all the way from the ground.
+Because Play is **built on reactive bedrock**.  Play starts from a reactive core, and builds on reactive principles all the way from the ground.
 
-Play uses a small thread pool, and keeps those threads fed with HTTP requests using the Reactor pattern, which means it's fast.  For streaming requests, it breaks network packets into a stream of small chunks of data and feeds those through Akka Streams, the Reactive Streams implementation designed by the people who invented Reactive Streams and wrote the Reactive Manifesto.  
+Play uses a small thread pool, and breaks network packets into a stream of small chunks of data keeps those threads fed with HTTP requests, which means it's fast.  and feeds those through Akka Streams, the Reactive Streams implementation designed by the people who invented Reactive Streams and wrote the Reactive Manifesto.  
 
-In fact, Play is so fast that you have to turn off machines so that the rest of your architecture can keep up.  The Hootsuite team was able to reduce the number of servers by 80% by switching to Play.  if you deploy Play with the same infrastructure that you were using for other web frameworks, you are effectively staging a denial of service attack against your own database.
+In fact, Play is so fast that you have to turn off machines so that the rest of your architecture can keep up.  The Hootsuite team was able to **reduce the number of servers by 80%** by [switching to Play](https://www.lightbend.com/resources/case-studies-and-stories/how-hootsuite-modernized-its-url-shortener).  if you deploy Play with the same infrastructure that you were using for other web frameworks, you are effectively staging a denial of service attack against your own database.
 
-Linkedin uses Play throughout its infrastructure. It wins on all four quadrants of scalability.  (You can watch a video about it.)  Play's average "request per second" comes in around "tens of k on a basic quad core w/o any intentional tuning" -- and it only gets better.  
+Linkedin uses Play throughout its infrastructure. It wins on all [four quadrants of scalability](http://www.slideshare.net/brikis98/the-play-framework-at-linkedin/128-Outline1_Getting_started_with_Play2) ([video](https://youtu.be/8z3h4Uv9YbE)).  Play's average "request per second" comes in around [tens of k on a basic quad core w/o any intentional tuning](https://twitter.com/kevinbowling1/status/764188720140398592) -- and it only gets better.  
 
-Play provides an easy to use MVC paradigm, including hot-reloading without any JVM bytecode magic or container overhead.  Startup time for a developer on Play was reduced by roughly 7 times for Walmart Canada, and using Play reduced development times by 2x to 3x.
+Play provides an easy to use MVC paradigm, including hot-reloading without any JVM bytecode magic or container overhead.  Startup time for a developer on Play was **reduced by roughly 7 times** for [Walmart Canada](https://www.lightbend.com/resources/case-studies-and-stories/walmart-boosts-conversions-by-20-with-lightbend-reactive-platform), and using Play **reduced development times by 2x to 3x**.
 
-Play combines this with a Reactive Programming API that lets you write async, non-blocking code in a straightforward fashion using Future and CompletableStage directly, without worrying about complex and confusing "callback hell."
+Play combines this with a **reactive programming API*** that lets you write async, non-blocking code in a straightforward fashion without worrying about complex and confusing "callback hell."
 
 ## Modelling a Post Resource
 
@@ -53,7 +53,7 @@ For every HTTP request starting with /posts, Play routes it to a dedicated PostR
 
 The PostRouter examines the URL and extracts data to pass along to the controller.
 
-Play’s routing DSL (aka SIRD) shows how data can be extracted from the URL concisely and cleanly:
+Play’s [routing DSL](https://www.playframework.com/documentation/2.5.x/ScalaSirdRouter) (aka SIRD) shows how data can be extracted from the URL concisely and cleanly:
 
 ```scala
 package post
@@ -92,31 +92,37 @@ then you can extract the "sort" and "count" parameters in a single line:
 GET("/" ? q_?"sort=$sort" & q_?”count=${ int(count) }")
 ```
 
-Cake Solutions covers SIRD in more depth in a fantastic blog post.
+Cake Solutions covers SIRD in more depth in a [fantastic blog post](http://www.cakesolutions.net/teamblogs/all-you-need-to-know-about-plays-routing-dsl).
 
-## Controlling Representation with Controller
+## Using a Controller
 
-The PostRouter has a PostController injected into it through standard JSR-330 dependency injection.  A controller handles the work of processing the HTTP request into an HTTP response in the context of an Action: it's where page rendering and HTML form processing happen.  A controller typically extends play.api.mvc.Controller, which contains a number of utility methods and constants for working with HTTP.  In particular, a Controller contains Result objects such as Ok and Redirect, and HeaderNames like ACCEPT.
+The PostRouter has a PostController injected into it through standard [JSR-330 dependency injection](https://github.com/google/guice/wiki/JSR330).  A controller [handles the work of processing](https://www.playframework.com/documentation/2.5.x/ScalaActions)  the HTTP request into an HTTP response in the context of an Action: it's where page rendering and HTML form processing happen.  A controller extends [`play.api.mvc.Controller`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Controller), which contains a number of utility methods and constants for working with HTTP.  In particular, a Controller contains Result objects such as Ok and Redirect, and HeaderNames like ACCEPT.
 
-A controller produces an Action, which provides the "engine" to Play.  Using the action, the controller passes in a block of code that takes a request passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a Result, or a Future[Result], depending on whether or not the action was called as "action { ... }" or "action.async { ... }".
+The methods in a controller consist of a method returning an [Action](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Action).  The Action provides the "engine" to Play.
 
+Using the action, the controller passes in a block of code that takes a [`Request`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as "action { ... }" or [`action.async { ... }`](https://www.playframework.com/documentation/2.5.x/ScalaAsync#How-to-create-a-Future[Result]). 
+ 
+### Handling GET Requests
+
+Here's a simple example of a Controller:
+ 
 ```scala
 import javax.inject.Inject
 import play.api.mvc._
 
 import scala.concurrent._
 
-class MyController @Inject()(action: ActionBuilder[AnyContent]) extends Controller {
+class MyController extends Controller {
 
   def index1: Action[AnyContent] = {
-    action { implicit request =>
+    Action { implicit request =>
       val r: Result = Ok("hello world")
       r
     }
   }
 
   def asyncIndex: Action[AnyContent] = {
-    action.async { implicit request =>
+    Action.async { implicit request =>
       val r: Future[Result] = Future.successful(Ok("hello world"))
       r
     }
@@ -124,11 +130,11 @@ class MyController @Inject()(action: ActionBuilder[AnyContent]) extends Controll
 }
 ```
 
-In this example, index1 and asyncIndex have exactly the same behavior.  Internally, it makes no difference whether we call `Result` or `Future[Result]` --  Play is non-blocking all the way through. 
+In this example, `index1` and `asyncIndex` have exactly the same behavior.  Internally, it makes no difference whether we call `Result` or `Future[Result]` -- Play is non-blocking all the way through. 
 
-However, if you're already working with Future, async makes it easier to pass that Future around. You can read more about this in the handling asynchronous results section of the Play documentation.
+However, if you're already working with `Future`, async makes it easier to pass that `Future` around. You can read more about this in the [handling asynchronous results](https://www.playframework.com/documentation/2.5.x/ScalaAsync) section of the Play documentation.
 
-Here's what PostController looks like:
+Here's what the PostController methods dealing with GET requests looks like:
 
 ```scala
 class PostController @Inject()(action: PostAction,
@@ -136,28 +142,11 @@ class PostController @Inject()(action: PostAction,
                              (implicit ec: ExecutionContext)
  extends Controller {
 
- private val form: Form[PostFormInput] = {
-   import play.api.data.Forms._
-
-   Form(
-     mapping(
-       "title" -> nonEmptyText,
-       "body" -> text
-     )(PostFormInput.apply)(PostFormInput.unapply)
-   )
- }
-
  def index: Action[AnyContent] = {
    action.async { implicit request =>
      handler.find.map { posts =>
        Ok(Json.toJson(posts))
      }
-   }
- }
-
- def process: Action[AnyContent] = {
-   action.async { implicit request =>
-     processJsonPost()
    }
  }
 
@@ -169,24 +158,10 @@ class PostController @Inject()(action: PostAction,
    }
  }
 
- private def processJsonPost[A]()(implicit request: PostRequest[A]): Future[Result] = {
-   def failure(badForm: Form[PostFormInput]) = {
-     Future.successful(BadRequest(badForm.errorsAsJson))
-   }
-
-   def success(input: PostFormInput) = {
-     handler.create(input).map { post =>
-       Created(Json.toJson(post))
-         .withHeaders(LOCATION -> post.link)
-     }
-   }
-
-   form.bindFromRequest().fold(failure, success)
- }
 }
 ```
 
-Let's take show as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. GET /posts/123.  
+Let's take `show` as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. `GET /posts/123`.  
 
 ```scala
 def show(id: String): Action[AnyContent] = {
@@ -198,9 +173,57 @@ def show(id: String): Action[AnyContent] = {
 }
 ```
 
-The id is passed in, and the handler looks up and returns a PostResource.  The Result sends back a 200 OK with the PostResource serialized as JSON.
+The id is passed in as a String, and the handler looks up and returns a `PostResource`.  The `Ok()` sends back a `Result` with a status code of "200 OK", containing a response body consisting of the `PostResource` serialized as JSON.
 
-Handling a POST request is also easy:
+### Processing Form Input
+
+Handling a POST request is also easy and is done through the `process` method:
+
+```scala
+class PostController @Inject()(action: PostAction,
+                              handler: PostResourceHandler)
+                             (implicit ec: ExecutionContext)
+  extends Controller {
+
+  private val form: Form[PostFormInput] = {
+    import play.api.data.Forms._
+
+    Form(
+      mapping(
+        "title" -> nonEmptyText,
+        "body" -> text
+      )(PostFormInput.apply)(PostFormInput.unapply)
+    )
+  }
+
+  def process: Action[AnyContent] = {
+    action.async { implicit request =>
+      processJsonPost()
+    }
+  }
+
+  private def processJsonPost[A]()(implicit request: PostRequest[A]):  Future[Result] = {
+    def failure(badForm: Form[PostFormInput]) = {
+      Future.successful(BadRequest(badForm.errorsAsJson))
+    }
+
+    def success(input: PostFormInput) = {
+      handler.create(input).map { post =>
+        Created(Json.toJson(post))
+          .withHeaders(LOCATION -> post.link)
+      }
+    }
+
+    form.bindFromRequest().fold(failure, success)
+  }
+}
+```
+
+Here, the `process` action is an action wrapper, and `processJsonPost` does most of the work.  In `processJsonPost`, we get to the [form processing](https://www.playframework.com/documentation/2.5.x/ScalaForms) part of the code.  
+
+Here, `form.bindFromRequest()` will map input from the HTTP request to a [`play.api.data.Form`](https://www.playframework.com/documentation/2.5.x/api/scala/index.html#play.api.data.Form), and handles form validation and error reporting.  
+
+If the `PostFormInput` passes validation, it's passed to the resource handler, using the `success` method.  If the form processing fails, then the `failure` method is called and the `FormError` is returned in JSON format.
 
 ```scala
 private val form: Form[PostFormInput] = {
@@ -215,37 +238,17 @@ private val form: Form[PostFormInput] = {
 }
 ```
 
-The form binds to the request using the names in the mapping -- "title" and "body" to the PostFormInput case class, and handles form validation and error reporting in processJsonPost.  If the PostFormInput passes validation, it's passed to the resource handler.
+The form binds to the HTTP request using the names in the mapping -- "title" and "body" to the `PostFormInput` case class.
 
 ```scala
- private def processJsonPost[A]()(implicit request: PostRequest[A]): Future[Result] = {
-   def failure(badForm: Form[PostFormInput]) = {
-     Future.successful(BadRequest(badForm.errorsAsJson))
-   }
-
-   def success(input: PostFormInput) = {
-     handler.create(input).map { post =>
-       Created(Json.toJson(post))
-         .withHeaders(LOCATION -> post.link)
-     }
-   }
-
-   form.bindFromRequest().fold(failure, success)
- }
+case class PostFormInput(title: String, body: String)
 ```
 
-Note the injected class parameters in the PostController:
+That's all you need to do to handle a basic web application!  As with most things, there are more details that need to be handled.  That's where creating custom Actions comes in.
 
-```scala
-class PostController @Inject()(handler: PostResourceHandler)
-                               (implicit ec: ExecutionContext)
-```
+## Using Actions
 
-The PostController relies on dependency injection to provide it with a PostResourceHandler, which provides the PostResource to the controller and handles the mapping internally.
-
-## Managing Actions with ActionBuilder
-
-We saw in the PostController that each method is connected to an Action through the "action.async" method:
+We saw in the `PostController` that each method is connected to an Action through the "action.async" method:
 
 ```scala
   def index: Action[AnyContent] = {
@@ -257,13 +260,13 @@ We saw in the PostController that each method is connected to an Action through 
   }
 ```
 
-The action.async takes a function, and comes from the class parameter "action", which we can see is of type PostAction:
+The action.async takes a function, and comes from the class parameter "action", which we can see is of type `PostAction`:
 
 ```scala
 class PostController @Inject()(action: PostAction [...])
 ```
 
-PostAction is involved in each action in the controller -- it mediates the paperwork involved with processing a request into a response, adding context to the request and enriching the response with headers and cookies.  ActionBuilders are essential for handling authentication, authorization and monitoring functionality.
+`PostAction` is involved in each action in the controller -- it mediates the paperwork involved with processing a request into a response, adding context to the request and enriching the response with headers and cookies.  ActionBuilders are essential for handling authentication, authorization and monitoring functionality.
 
 ActionBuilders work through a process called function composition.   This is called "Action Composition" in the Play documentation.  The ActionBuilder class has a method called "invokeBlock" that takes in a request and a function (also known as a block, lambda or closure) that accepts a request of a given type, and produces a Future[Result].
 
