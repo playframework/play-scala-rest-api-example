@@ -266,23 +266,35 @@ The action.async takes a function, and comes from the class parameter "action", 
 class PostController @Inject()(action: PostAction [...])
 ```
 
-`PostAction` is involved in each action in the controller -- it mediates the paperwork involved with processing a request into a response, adding context to the request and enriching the response with headers and cookies.  ActionBuilders are essential for handling authentication, authorization and monitoring functionality.
+`PostAction` is an ActionBuilder.  It is involved in each action in the controller -- it mediates the paperwork involved with processing a request into a response, adding context to the request and enriching the response with headers and cookies.  ActionBuilders are essential for handling authentication, authorization and monitoring functionality.
 
-ActionBuilders work through a process called function composition.   This is called "Action Composition" in the Play documentation.  The ActionBuilder class has a method called "invokeBlock" that takes in a request and a function (also known as a block, lambda or closure) that accepts a request of a given type, and produces a Future[Result].
+ActionBuilders work through a process called [action composition](https://www.playframework.com/documentation/2.5.x/ScalaActionsComposition).  The ActionBuilder class has a method called `invokeBlock` that takes in a `Request` and a function (also known as a block, lambda or closure) that accepts a `Request` of a given type, and produces a `Future[Result]`.
 
-So, if you want to work with an Action that has a "FooRequest", it's easy.  You extend WrappedRequest, create an `ActionBuilder[FooRequest]`, override invokeBlock, and then call the function with an instantiation of FooRequest: 
+So, if you want to work with an `Action` that has a "FooRequest" that has a Foo attached, it's easy: 
 
 ```scala
-class FooRequest[A](request: Request[A]) extends WrappedRequest(request)
+class FooRequest[A](request: Request[A], val foo: Foo) extends WrappedRequest(request)
 
 class FooAction extends ActionBuilder[FooRequest] {
   type FooRequestBlock[A] = FooRequest[A] => Future[Result]
 
   override def invokeBlock[A](request: Request[A], block: FooRequestBlock[A]) = {
-    block(new FooRequest[A](request))
+    block(new FooRequest[A](request, new Foo))
   }
 }
 ```
+
+You create an `ActionBuilder[FooRequest]`, override `invokeBlock`, and then call the function with an instance of `FooRequest`.  
+
+Then, when you call `fooAction`, the request type is `FooRequest`:
+
+```scala
+fooAction { request: FooRequest => 
+  Ok(request.foo.toString)
+}
+```
+
+And `request.foo` will be added automatically.
 
 You can keep composing action builders inside each other, so you don't have to layer all the functionality in one single ActionBuilder, or you can create a custom ActionBuilder for each package you work with, according to your taste.  For the purposes of this blog post, we'll keep everything together in a single class.
 
@@ -311,7 +323,7 @@ class PostAction @Inject()(messagesApi: MessagesApi)
     future.map { result =>
       request.method match {
         case GET | HEAD =>
-          result.withHeaders(("Cache-Control", s"max-age: 100"))
+          result.withHeaders("Cache-Control" -> s"max-age: 100")
         case other =>
           result
       }
@@ -320,17 +332,17 @@ class PostAction @Inject()(messagesApi: MessagesApi)
 }
 ```
 
-PostAction does a couple of different things here.  The first thing it does is to log the request as it comes in with a custom marker, to allow for triggering and filtering log statements.  Next, it pulls out the localized Messages for the request, and adds that to a PostRequest instance, and runs the function, returning a Future[Result].
+`PostAction` does a couple of different things here.  The first thing it does is to log the request as it comes in.  Next, it pulls out the localized `Messages` for the request, and adds that to a `PostRequest` , and runs the function, returning a `Future[Result]`.
 
-When the future completes, we map the result so we can replace it with a slightly different result.  We compare the result's method against HttpVerbs, and if it's a GET or HEAD, we append a Cache-Control header with a max-age directive.  We need an ExecutionContext for future.map operations, so we pass in the default execution context implicitly at the top of the class.
+When the future completes, we map the result so we can replace it with a slightly different result.  We compare the result's method against `HttpVerbs`, and if it's a GET or HEAD, we append a Cache-Control header with a max-age directive.  We need an `ExecutionContext` for `future.map` operations, so we pass in the default execution context implicitly at the top of the class.
 
-Now that we have a PostRequest, we can call "request.messages" explicitly from any action in the controller, for free, and we can append information to the result after the user action has been completed.
+Now that we have a `PostRequest`, we can call "request.messages" explicitly from any action in the controller, for free, and we can append information to the result after the user action has been completed.
 
 ## Converting resources with PostResourceHandler
 
-The PostResourceHandler is responsible for converting backend data from a repository into a PostResource. We won't go into detail on the PostRepository details for now, only that it returns data in an backend-centric state.
+The `PostResourceHandler` is responsible for converting backend data from a repository into a `PostResource`. We won't go into detail on the `PostRepository` details for now, only that it returns data in an backend-centric state.
 
-A REST resource has information that a backend repository does not -- it knows about the operations available on the resource, and contains URI information that a single backend may not have.  As such, we want to be able to change the representation that we use internally without changing the resource that we expose publically.  
+A REST resource has information that a backend repository does not -- it knows about the operations available on the resource, and contains URI information that a single backend may not have.  As such, we want to be able to change the representation that we use internally without changing the resource that we expose publicly.  
 
 ```scala
 class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
@@ -367,11 +379,11 @@ class PostResourceHandler @Inject()(routerProvider: Provider[PostRouter],
 }
 ```
 
-Here, it's a straight conversion in createPostResource, with the only hook being that the router provides the resource's URL, since it's something that PostData doesn't have itself.
+Here, it's a straight conversion in `createPostResource`, with the only hook being that the router provides the resource's URL, since it's something that `PostData` doesn't have itself.
 
 ## Rendering Content as JSON
 
-Play handles the work of converting a PostResource through Play JSON. Play JSON provides a DSL that looks up the conversion for the PostResource singleton object:
+Play handles the work of converting a `PostResource` through [Play JSON](https://www.playframework.com/documentation/2.5.x/ScalaJson). Play JSON provides a DSL that looks up the conversion for the PostResource singleton object:
 
 ```scala
 object PostResource {
@@ -387,13 +399,13 @@ object PostResource {
 }
 ```
 
-Once the implicit is defined in the companion object, then it will be looked up automatically when handed an instance of the class.  This means that when the controller converts to JSON,
+Once the implicit is defined in the companion object, then it will be looked up automatically when handed an instance of the class.  This means that when the controller converts to JSON, the conversion will just work, without any additional imports or setup.  
 
 ```scala
 val json: JsValue = Json.toJson(post)
 ```
 
-will just work, without any additional imports or setup.  Play JSON also has options to incrementally parse and generate JSON for continuously streaming JSON responses.
+Play JSON also has options to incrementally parse and generate JSON for continuously streaming JSON responses.
 
 ## Summary
 
@@ -401,9 +413,9 @@ We've shown how to easy it is to put together a scalable REST API in Play.  Usin
 
 From here, the sky is the limit.  
 
-Check out the Play tutorials at https://playframework.com/documentation/2.5.x/Tutorials and see more examples and blog posts about Play, including streaming Server Side Events https://github.com/playframework/play-streaming-scala and first class WebSocket support https://github.com/playframework/play-websocket-scala
+Check out the [Play tutorials](https://playframework.com/documentation/2.5.x/Tutorials) and see more examples and blog posts about Play, including streaming [Server Side Events](https://github.com/playframework/play-streaming-scala) and first class [WebSocket support](https://github.com/playframework/play-websocket-scala).
 
-To get more involved and if you have questions, join the mailing list at https://groups.google.com/forum/#!forum/play-framework and follow PlayFramework on Twitter https://twitter.com/playframework.
+To get more involved and if you have questions, join the [mailing list](https://groups.google.com/forum/#!forum/play-framework) at  and follow [PlayFramework on Twitter](https://twitter.com/playframework).
 
 ## Appendix
 
