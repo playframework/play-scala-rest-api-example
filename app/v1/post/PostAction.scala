@@ -1,4 +1,4 @@
-package post
+package v1.post
 
 import javax.inject.Inject
 
@@ -25,7 +25,8 @@ class PostRequest[A](request: Request[A],
  * the request with contextual data, and manipulate the
  * result.
  */
-class PostAction @Inject()(messagesApi: MessagesApi)(implicit ec: ExecutionContext)
+class PostAction @Inject()(messagesApi: MessagesApi)
+                          (implicit ec: ExecutionContext)
   extends ActionBuilder[PostRequest] with HttpVerbs {
 
   type PostRequestBlock[A] = PostRequest[A] => Future[Result]
@@ -43,7 +44,7 @@ class PostAction @Inject()(messagesApi: MessagesApi)(implicit ec: ExecutionConte
     future.map { result =>
       request.method match {
         case GET | HEAD =>
-          result.withHeaders(("Cache-Control", s"max-age: 100"))
+          result.withHeaders("Cache-Control" -> s"max-age: 100")
         case other =>
           result
       }

@@ -1,4 +1,4 @@
-package post
+package v1.post
 
 import javax.inject.{Inject, Provider}
 
