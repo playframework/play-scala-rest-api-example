@@ -45,10 +45,10 @@ GET    /               controllers.HomeController.index()
 
 This is useful for situations where a front end service is rendering HTML.  However, Play also contains a more powerful routing DSL that we will use for the REST API.
 
-For every HTTP request starting with /posts, Play routes it to a dedicated PostRouter class to handle the Posts resource, through the conf/routes file: 
+For every HTTP request starting with `/v1/posts`, Play routes it to a dedicated PostRouter class to handle the Posts resource, through the conf/routes file: 
 
 ```
-->     /posts               post.PostRouter
+->     /v1/posts               v1.post.PostRouter
 ```
 
 The PostRouter examines the URL and extracts data to pass along to the controller.
@@ -56,7 +56,7 @@ The PostRouter examines the URL and extracts data to pass along to the controlle
 Play’s [routing DSL](https://www.playframework.com/documentation/2.5.x/ScalaSirdRouter) (aka SIRD) shows how data can be extracted from the URL concisely and cleanly:
 
 ```scala
-package post
+package v1.post
 import javax.inject.Inject
 
 import play.api.mvc._
@@ -100,7 +100,7 @@ The PostRouter has a PostController injected into it through standard [JSR-330 d
 
 The methods in a controller consist of a method returning an [Action](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Action).  The Action provides the "engine" to Play.
 
-Using the action, the controller passes in a block of code that takes a [`Request`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as "action { ... }" or [`action.async { ... }`](https://www.playframework.com/documentation/2.5.x/ScalaAsync#How-to-create-a-Future[Result]). 
+Using the action, the controller passes in a block of code that takes a [`Request`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as `action { ... }` or [`action.async { ... }`](https://www.playframework.com/documentation/2.5.x/ScalaAsync#How-to-create-a-Future[Result]). 
  
 ### Handling GET Requests
 
@@ -161,7 +161,7 @@ class PostController @Inject()(action: PostAction,
 }
 ```
 
-Let's take `show` as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. `GET /posts/123`.  
+Let's take `show` as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. `GET /v1/posts/123`.  
 
 ```scala
 def show(id: String): Action[AnyContent] = {
@@ -436,34 +436,32 @@ Play will start up on the HTTP port at http://localhost:9000/.   You don't need 
 If you call the same URL from the command line, you’ll see JSON. Using httpie, we can execute the command:
 
 ```
-http --verbose http://localhost:9000/posts
+http --verbose http://localhost:9000/v1/posts
 ```
 
 and get back:
 
 ```
-GET /posts HTTP/1.1
+GET /v1/posts HTTP/1.1
 ```
 
 Likewise, you can also send a POST directly as JSON:
 
 ```
-http --verbose POST http://localhost:9000/posts title="hello" body="world"
+http --verbose POST http://localhost:9000/v1/posts title="hello" body="world"
 ```
 
 and get:
 
 ```
-POST /posts HTTP/1.1
+POST /v1/posts HTTP/1.1
 ```
 
 ### Load Testing
 
 The best way to see what Play can do is to run a load test.  We've included Gatling in this test project for integrated load testing.
 
-Start Play in production mode, by staging the application and running the play script:
-
-https://www.playframework.com/documentation/2.5.x/Deploying
+Start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play script:s
 
 ```
 sbt stage
@@ -477,10 +475,12 @@ Then you'll start the Gatling load test up (it's already integrated into the pro
 sbt gatling:test
 ```
 
-For best results, start the gatling load test up on another machine so you do not have contending resources.  You can edit the Gatling simulation, and change the numbers as appropriate http://gatling.io/docs/2.2.2/general/simulation_structure.html#simulation-structure
+For best results, start the gatling load test up on another machine so you do not have contending resources.  You can edit the [Gatling simulation](http://gatling.io/docs/2.2.2/general/simulation_structure.html#simulation-structure), and change the numbers as appropriate.
 
 Once the test completes, you'll see an HTML file containing the load test chart:
 
+```
  ./rest-api/target/gatling/gatlingspec-1472579540405/index.html
+```
 
 That will contain your load test results.

@@ -1,4 +1,4 @@
-package post
+package v1.post
 
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ import play.api.routing.sird._
  */
 class PostRouter @Inject()(controller: PostController)
   extends SimpleRouter {
-  val prefix = "/posts"
+  val prefix = "/v1/posts"
 
   def link(id: PostId): String = {
     import com.netaporter.uri.dsl._

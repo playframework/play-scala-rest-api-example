@@ -1,3 +1,5 @@
+package v1
+
 import play.api.i18n.Messages
 import play.api.mvc.Result
 
