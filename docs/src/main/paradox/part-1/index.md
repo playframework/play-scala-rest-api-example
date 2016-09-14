@@ -2,7 +2,7 @@
 
 This guide will walk you through how to make a RESTful API with JSON using [Play 2.5](https://playframework.com).
 
-To see the associated Github project, please go to [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api).  This is the first blog post, so we're going to be showing an already working Play project with most of the code available under the "app/v1" directory.
+To see the associated Github project, please go to [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api).  We're going to be showing an already working Play project with most of the code available under the "app/v1" directory.  There will be several different versions of the same project as this series expands, so you can compare different versions of the controller against each other.
 
 To run Play on your own local computer, please see the instructions in the [Appendix](../appendix.md). 
 
