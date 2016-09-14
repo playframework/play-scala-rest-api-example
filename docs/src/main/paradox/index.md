@@ -30,6 +30,12 @@ For instructions on running and using the project, please see the [appendix](app
 
 Interested in load testing this project?  It comes with an integrated [Gatling](http://gatling.io/) load test.  Again, instructions are in the [appendix](appendix.md).
 
+## Community
+
+To learn more about Play, check out the [Play tutorials](https://playframework.com/documentation/2.5.x/Tutorials) and see more examples and blog posts about Play, including streaming [Server Side Events](https://github.com/playframework/play-streaming-scala) and first class [WebSocket support](https://github.com/playframework/play-websocket-scala).
+
+To get more involved and if you have questions, join the [mailing list](https://groups.google.com/forum/#!forum/play-framework) at  and follow [PlayFramework on Twitter](https://twitter.com/playframework).
+
 ## Things Not Covered By This Guide
 
 One thing to note here is that although this guide covers how to make a REST API in Play, it only covers Play itself and deploying Play on a single server.  It does not cover larger scale concerns about microservices such as ensuring resiliency, persistence, distributing work over multiple machines, or monitoring.
@@ -44,9 +50,3 @@ With that caveat, let's start working with Play!
 * [Appendix](appendix.md)
 
 @@@
-
-## Community
-
-To learn more about Play, check out the [Play tutorials](https://playframework.com/documentation/2.5.x/Tutorials) and see more examples and blog posts about Play, including streaming [Server Side Events](https://github.com/playframework/play-streaming-scala) and first class [WebSocket support](https://github.com/playframework/play-websocket-scala).
-
-To get more involved and if you have questions, join the [mailing list](https://groups.google.com/forum/#!forum/play-framework) at  and follow [PlayFramework on Twitter](https://twitter.com/playframework).
