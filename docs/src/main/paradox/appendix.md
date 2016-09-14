@@ -1,21 +1,37 @@
 
-## Appendix
+# Appendix
 
-### Running
+This appendix covers how to download, run, use and load test Play.
 
-You need to download and install sbt for this application to run.
+## Requirements
 
-Once you have sbt installed, the following at the command prompt will start up Play in development mode:
+You will need a JDK 1.8 that is more recent than b20.  You can download the JDK from [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+You will need to have git installed.
+
+## Downloading
+
+You can download the example project from Github:
+
+```
+git clone https://github.com/playframework/play-rest-api.git
+```
+
+## Running
+
+You need to download and install sbt for this application to run.  You can do that by going to the [sbt download page](http://www.scala-sbt.org/download.html) and following the instructions for your platform.
+
+Once you have sbt installed, the following at the command prompt will download any required library dependencies, and start up Play in development mode:
 
 ```
 sbt run
 ```
 
-Play will start up on the HTTP port at http://localhost:9000/.   You don't need to reploy or reload anything -- changing any source code while the server is running will automatically recompile and hot-reload the application on the next HTTP request. 
+Play will start up on the HTTP port at http://localhost:9000/.   You don't need to reploy or reload anything -- changing any source code while the server is running will automatically recompile and hot-reload the application on the next HTTP request.  You can read more about using Play [here](https://www.playframework.com/documentation/2.5.x/PlayConsole).
 
-### Usage
+## Usage
 
-If you call the same URL from the command line, you’ll see JSON. Using httpie, we can execute the command:
+If you call the same URL from the command line, you’ll see JSON. Using [httpie](https://httpie.org/), we can execute the command:
 
 ```
 http --verbose http://localhost:9000/v1/posts
@@ -39,11 +55,11 @@ and get:
 POST /v1/posts HTTP/1.1
 ```
 
-### Load Testing
+## Load Testing
 
 The best way to see what Play can do is to run a load test.  We've included Gatling in this test project for integrated load testing.
 
-Start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play script:s
+Start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play scripts:
 
 ```
 sbt stage

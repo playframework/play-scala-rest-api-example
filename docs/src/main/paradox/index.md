@@ -24,11 +24,17 @@ Play combines this with a **reactive programming API** that lets you write async
 
 Finally, Play is modular and extensible.  Play works with multiple runtime and compile time dependency injection frameworks like [Guice](https://www.playframework.com/documentation/2.5.x/ScalaDependencyInjection), [Macwire](https://di-in-scala.github.io/), [Dagger](https://github.com/esfand-r/play-java-dagger-dependency-injection#master), and leverages DI principles to integrate authentication and authorization frameworks built on top of Play.
 
+## Running, Using and Load Testing
+
+For instructions on running and using the project, please see the [appendix](appendix.md).
+
+Interested in load testing this project?  It comes with an integrated [Gatling](http://gatling.io/) load test.  Again, instructions are in the [appendix](appendix.md).
+
 ## Things Not Covered By This Guide
 
 One thing to note here is that although this guide covers how to make a REST API in Play, it only covers Play itself and deploying Play on a single server.  It does not cover larger scale concerns about microservices such as ensuring resiliency, persistence, distributing work over multiple machines, or monitoring.
 
-For full scale microservices, you want [Lagom](http://www.lagomframework.com/), which is an "industrialized" Play -- a microservices framework set up with built in persistence and service APIs set up to ensure that the service always stays up and responsive even in the face of chaos monkeys.
+For full scale microservices, you want [Lagom](http://www.lagomframework.com/), which is an "industrialized" Play -- a microservices framework set up with built in persistence and service APIs set up to ensure that the service always stays up and responsive even in the face of chaos monkeys and network partitions.
 
 With that caveat, let's start working with Play!
 
