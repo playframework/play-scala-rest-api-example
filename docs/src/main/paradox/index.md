@@ -2,7 +2,11 @@
 
 This is a multi-part guide to walk you through how to make a RESTful API with JSON using [Play 2.5](https://playframework.com).
 
-## Introduction to Play
+We’ll demonstrate with a “best practices” REST API that you can clone from [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api) -- this example is in Scala, but Play also has a Java API which looks and acts just like the Scala API.
+
+Note that there’s more involved in a REST API -- monitoring, representation, and managing access to back end resources -- that we'll cover in subsequent posts.  But first, let's address why Play is so effective as a REST API.
+
+## When to use Play
 
 Play makes a good REST API implementation because Play does the right thing out of the box.  Play makes simple things easy, makes hard things possible, and encourages code that scales because it works in sympathy with the JVM and the underlying hardware. But "safe and does the right thing" is the boring answer.
 
@@ -20,9 +24,29 @@ Play combines this with a **reactive programming API** that lets you write async
 
 Finally, Play is modular and extensible.  Play works with multiple runtime and compile time dependency injection frameworks like [Guice](https://www.playframework.com/documentation/2.5.x/ScalaDependencyInjection), [Macwire](https://di-in-scala.github.io/), [Dagger](https://github.com/esfand-r/play-java-dagger-dependency-injection#master), and leverages DI principles to integrate authentication and authorization frameworks built on top of Play.
 
+## Running, Using and Load Testing
+
+For instructions on running and using the project, please see the [appendix](appendix.md).
+
+Interested in load testing this project?  It comes with an integrated [Gatling](http://gatling.io/) load test.  Again, instructions are in the [appendix](appendix.md).
+
+## Things Not Covered By This Guide
+
+One thing to note here is that although this guide covers how to make a REST API in Play, it only covers Play itself and deploying Play on a single server.  It does not cover larger scale concerns about microservices such as ensuring resiliency, persistence, distributing work over multiple machines, or monitoring.
+
+For full scale microservices, you want [Lagom](http://www.lagomframework.com/), which is an "industrialized" Play -- a microservices framework set up with built in persistence and service APIs set up to ensure that the service always stays up and responsive even in the face of chaos monkeys and network partitions.
+
+With that caveat, let's start working with Play!
+
 @@@index
 
 * [Basics](part-1/index.md)
 * [Appendix](appendix.md)
 
 @@@
+
+## Community
+
+To learn more about Play, check out the [Play tutorials](https://playframework.com/documentation/2.5.x/Tutorials) and see more examples and blog posts about Play, including streaming [Server Side Events](https://github.com/playframework/play-streaming-scala) and first class [WebSocket support](https://github.com/playframework/play-websocket-scala).
+
+To get more involved and if you have questions, join the [mailing list](https://groups.google.com/forum/#!forum/play-framework) at  and follow [PlayFramework on Twitter](https://twitter.com/playframework).
