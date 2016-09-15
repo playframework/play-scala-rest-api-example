@@ -4,20 +4,18 @@ This guide will walk you through how to make a RESTful API with JSON using [Play
 
 To see the associated Github project, please go to [http://github.com/playframework/play-rest-api](http://github.com/playframework/play-rest-api).  We're going to be showing an already working Play project with most of the code available under the "app/v1" directory.  There will be several different versions of the same project as this series expands, so you can compare different versions of the controller against each other.
 
-To run Play on your own local computer, please see the instructions in the [Appendix](../appendix.md). 
+To run Play on your own local computer, please see the instructions in the [appendix](../appendix.md). 
 
 ## Modelling a Post Resource
 
 We'll start off with a REST API that displays information for blog posts.   This is a resource that will contain all the data to start with -- it will have a unique id, a URL hyperlink that indicates the canonical location of the resource, the title of the blog post, and the body of the blog post.
 
-This resource is represented as a single case class in the Play application.
+This resource is represented as a single case class in the Play application [here](https://github.com/playframework/play-rest-api/blob/master/app/v1/post/PostResourceHandler.scala#L13):
 
 ```scala
 case class PostResource(id: String, link: String,
                         title: String, body: String)
 ```
-
-You can find this class on Github [here](https://github.com/playframework/play-rest-api/blob/master/app/v1/post/PostResourceHandler.scala#L13).
 
 This resource is mapped to and from JSON on the front end using Play, and is mapped to and from a persistent datastore on the backend using a handler.  
 
