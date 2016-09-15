@@ -80,13 +80,23 @@ SIRD is especially useful in a REST API where there can be many possible query p
 
 ## Using a Controller
 
-The PostRouter has a PostController injected into it through standard [JSR-330 dependency injection](https://github.com/google/guice/wiki/JSR330).  A controller [handles the work of processing](https://www.playframework.com/documentation/2.5.x/ScalaActions)  the HTTP request into an HTTP response in the context of an Action: it's where page rendering and HTML form processing happen.  A controller extends [`play.api.mvc.Controller`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Controller), which contains a number of utility methods and constants for working with HTTP.  In particular, a Controller contains Result objects such as Ok and Redirect, and HeaderNames like ACCEPT.
+The PostRouter has a PostController injected into it through standard [JSR-330 dependency injection](https://github.com/google/guice/wiki/JSR330) [here](https://github.com/playframework/play-rest-api/blob/master/app/v1/post/PostRouter.scala#L12):
+
+```scala
+class PostRouter @Inject()(controller: PostController)
+  extends SimpleRouter
+```
+
+Before heading into the PostController, let's discuss how controllers work in Play.
+
+A controller [handles the work of processing](https://www.playframework.com/documentation/2.5.x/ScalaActions)  the HTTP request into an HTTP response in the context of an Action: it's where page rendering and HTML form processing happen.  A controller extends [`play.api.mvc.Controller`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Controller), which contains a number of utility methods and constants for working with HTTP.  In particular, a Controller contains Result objects such as Ok and Redirect, and HeaderNames like ACCEPT.
 
 The methods in a controller consist of a method returning an [Action](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Action).  The Action provides the "engine" to Play.
 
 Using the action, the controller passes in a block of code that takes a [`Request`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://playframework.com/documentation/2.5.x/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as `action { ... }` or [`action.async { ... }`](https://www.playframework.com/documentation/2.5.x/ScalaAsync#How-to-create-a-Future[Result]). 
  
 ### Handling GET Requests
+
 
 Here's a simple example of a Controller:
  
