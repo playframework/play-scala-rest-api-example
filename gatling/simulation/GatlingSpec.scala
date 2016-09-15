@@ -16,7 +16,10 @@ class GatlingSpec extends Simulation {
   val readClients = scenario("Clients").exec(Index.refreshManyTimes)
 
   setUp(
-    readClients.inject(rampUsers(10000) over (1000 seconds)).protocols(httpConf)
+    // For reference, this hits 25% CPU on a 5820K with 32 GB, running both server and load test.
+    // In general, you want to ramp up load slowly, and measure with a JVM that has been "warmed up":
+    // https://groups.google.com/forum/#!topic/gatling/mD15aj-fyo4
+    readClients.inject(rampUsers(10000) over (100 seconds)).protocols(httpConf)
   )
 }
 
