@@ -12,13 +12,13 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       // A useful URL construction library
       "com.netaporter" %% "scala-uri" % "0.4.14",
-      // Use scala-guice
-      "net.codingwell" %% "scala-guice" % "4.1.0",
+libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
+libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
       // Add scalatest in for test framework
-      "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
       // Add Gatling in for laod testing
-      "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % Test,
-      "io.gatling" % "gatling-test-framework" % "2.2.2" % Test
+libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % Test
+libraryDependencies += "io.gatling" % "gatling-test-framework" % "2.2.2" % Test
     ),
     scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
   )
