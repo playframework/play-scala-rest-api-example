@@ -24,12 +24,10 @@ class PostRequest[A](request: Request[A], val messages: Messages)
   * the request with contextual data, and manipulate the
   * result.
   */
-class PostAction @Inject()(messagesApi: MessagesApi, playBodyParsers: PlayBodyParsers)
-                          (implicit val executionContext: ExecutionContext)
-    extends ActionBuilder[PostRequest, AnyContent]
+class PostAction @Inject()(messagesApi: MessagesApi)(
+    implicit ec: ExecutionContext)
+    extends ActionBuilder[PostRequest]
     with HttpVerbs {
-
-  val parser: BodyParser[AnyContent] = playBodyParsers.anyContent
 
   type PostRequestBlock[A] = PostRequest[A] => Future[Result]
 
@@ -53,5 +51,4 @@ class PostAction @Inject()(messagesApi: MessagesApi, playBodyParsers: PlayBodyPa
       }
     }
   }
-
 }
