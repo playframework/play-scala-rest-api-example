@@ -1,4 +1,6 @@
-# Play REST API
+[<img src="https://img.shields.io/travis/playframework/play-scala-rest-api-example.svg"/>](https://travis-ci.org/playframework/play-scala-rest-api-example)
+
+# play-scala-rest-api-example
 
 This is the example project for [Making a REST API in Play](http://developer.lightbend.com/guides/play-rest-api/index.html).
 
