@@ -2,7 +2,7 @@
 
 This guide will walk you through how to make a REST API with JSON using [Play 2.5](https://playframework.com).
 
-To see the associated Github project, please go to [https://github.com/playframework/play-rest-api-example](https://github.com/playframework/play-scala-rest-api-example) or clone the project:
+To see the associated Github project, please go to [https://github.com/playframework/play-scala-rest-api-example](https://github.com/playframework/play-scala-rest-api-example) or clone the project:
 
 ```
 git clone https://github.com/playframework/play-scala-rest-api-example.git
