@@ -6,9 +6,12 @@ scalaVersion := "2.11.11"
 
 libraryDependencies += "com.netaporter" %% "scala-uri" % "0.4.14"
 libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
+
+// test dependencies
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.5" % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "2.2.5" % Test
+libraryDependencies += "org.mockito" % "mockito-all" % "1.9.5" % "test"
     
 // The Play project itself
 lazy val root = (project in file("."))
