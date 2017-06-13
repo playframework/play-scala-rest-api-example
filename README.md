@@ -44,6 +44,15 @@ and get:
 POST /v1/posts HTTP/1.1
 ```
 
+### Testing
+
+In order to run unit and functional tests
+
+```
+sbt test
+```
+
+
 ### Load Testing
 
 The best way to see what Play can do is to run a load test.  We've included Gatling in this test project for integrated load testing.
@@ -71,3 +80,13 @@ Once the test completes, you'll see an HTML file containing the load test chart:
 ```
 
 That will contain your load test results.
+
+
+### Eclipse
+
+In order to generate artifacts for Eclipse Scala IDE using sbteclipse:
+
+```
+sbt eclipse
+```
+
