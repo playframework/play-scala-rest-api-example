@@ -12,16 +12,15 @@ import org.scalatest.Matchers
 import org.scalatest.selenium.WebBrowser
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
-class PostSpec extends PlaySpec with GuiceOneAppPerSuite {
+class PostBrowserSpec extends PlaySpec with GuiceOneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory {
 
-  // Override fakeApplication if you need a Application with other than
-  // default parameters.
   override def fakeApplication() = new GuiceApplicationBuilder().build()
-
-  "The GuiceOneAppPerSuite trait" must {
-    "start the Application" in {
-      app.configuration != null mustBe true
-      app.configuration.getConfig("play") != null mustBe true
+  
+  "The OneBrowserPerTest trait" must {
+    "provide a web driver" in {
+      go to s"http://localhost:$port/"
+      pageTitle mustBe "Play REST API"
     }
   }
+  
 }
