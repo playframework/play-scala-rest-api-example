@@ -69,3 +69,48 @@ Once the test completes, you'll see an HTML file containing the load test chart:
 ```
 
 That will contain your load test results.
+
+### Docker
+
+In order to dockerize your play rest api example run the following steps:
+
+1. Generate secret key - since docker will host our production app we need to generate a secret key.
+
+```
+sbt playGenerateSecret
+```
+
+copy the secret key (for example: "YtvWptxIlpf@Q[_dPvE[Z6NLAh_KU0YlGvwnN7sV8DKSk>PSBNbzarVp8j?=;l/y")
+
+2. Create a new prod dist
+
+```
+sbt dist
+```
+
+3. Generate a new local Docker image
+
+```
+sbt docker:publishLocal
+```
+
+4. Run the play app inside a docker container
+
+(* replace with your generated key)
+
+```
+docker run -p 9000:9000 -e APPLICATION_SECRET="YtvWptxIlpf@Q[_dPvE[Z6NLAh_KU0YlGvwnN7sV8DKSk>PSBNbzarVp8j?=;l/y" play-scala-rest-api-example:1.0-SNAPSHOT
+```
+
+5. Misc commands
+
+to clean the image using sbt-native-packager
+
+```
+sbt docker:clean
+```
+
+* In order to stop all running docker containers
+```
+docker stop $(docker ps -aq)
+```
