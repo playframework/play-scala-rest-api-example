@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.docker.ExecCmd
 import sbt.Keys._
 
 lazy val GatlingTest = config("gatling") extend Test
@@ -33,3 +34,25 @@ lazy val docs = (project in file("docs")).enablePlugins(ParadoxPlugin).
   settings(
     paradoxProperties += ("download_url" -> "https://example.lightbend.com/v1/download/play-rest-api")
   )
+
+
+javaOptions in Universal ++= Seq(
+  // JVM memory tuning
+  "-J-Xmx1024m",
+  "-J-Xms128m",
+
+  // Since play uses separate pidfile we have to provide it with a proper path
+  // name of the pid file must be play.pid
+  s"-Dpidfile.path=/opt/docker/${packageName.value}/run/play.pid"
+
+)
+
+// use ++= to merge a sequence with an existing sequence
+dockerCommands ++= Seq(
+  ExecCmd("RUN", "mkdir", s"/opt/docker/${packageName.value}"),
+  ExecCmd("RUN", "mkdir", s"/opt/docker/${packageName.value}/run"),
+  ExecCmd("RUN", "chown", "-R", "daemon:daemon", s"/opt/docker/${packageName.value}/")
+)
+
+// exposing the play ports
+dockerExposedPorts in Docker := Seq(9000, 9443)
