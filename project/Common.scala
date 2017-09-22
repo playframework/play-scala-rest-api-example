@@ -21,7 +21,7 @@ object Common extends AutoPlugin {
       "-deprecation",
       "-feature",
       "-unchecked",
-      "-Xlint",
+      "-Xlint:_,-unused", // work around for https://github.com/playframework/playframework/issues/7519
       "-Yno-adapted-args",
       "-Ywarn-numeric-widen",
       "-Xfatal-warnings"

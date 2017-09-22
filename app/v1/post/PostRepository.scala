@@ -21,8 +21,8 @@ object PostId {
   }
 }
 
-
-class PostExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "repository.dispatcher")
+class PostExecutionContext @Inject()(actorSystem: ActorSystem)
+    extends CustomExecutionContext(actorSystem, "repository.dispatcher")
 
 /**
   * A pure non-blocking interface for the PostRepository.
@@ -43,7 +43,8 @@ trait PostRepository {
   * such as rendering.
   */
 @Singleton
-class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends PostRepository {
+class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext)
+    extends PostRepository {
 
   private val logger = Logger(this.getClass)
 
@@ -62,7 +63,8 @@ class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends 
     }
   }
 
-  override def get(id: PostId)(implicit mc: MarkerContext): Future[Option[PostData]] = {
+  override def get(id: PostId)(
+      implicit mc: MarkerContext): Future[Option[PostData]] = {
     Future {
       logger.trace(s"get: id = $id")
       postList.find(post => post.id == id)
