@@ -4,6 +4,8 @@ lazy val GatlingTest = config("gatling") extend Test
 
 scalaVersion in ThisBuild := "2.12.4"
 
+crossScalaVersions := Seq("2.11.12", "2.12.4")
+
 libraryDependencies += guice
 libraryDependencies += "org.joda" % "joda-convert" % "1.9.2"
 libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "4.11"
