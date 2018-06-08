@@ -5,10 +5,10 @@ This is a multi-part guide to walk you through how to make a RESTful API with JS
 We’ll demonstrate with a "best practices" REST API.  You can get source code for this guide two ways:
 
 ## From Lightbend Tech Hub
- 
+
 Download a pre-packaged bundle with this link [https://example.lightbend.com/v1/download/play-scala-rest-api-example](https://example.lightbend.com/v1/download/play-scala-rest-api-example)
 
-### Linux/Mac:
+### Linux/Mac
 
 ```bash
 unzip play-scala-rest-api-example.zip
@@ -16,12 +16,12 @@ cd play-scala-rest-api-example
 ./sbt
 ```
 
-### Windows:
+### Windows
 
 1. Unzip the download
 1. From a command line `cd` into the directory where you expanded the downloaded `zip` file and run:
 
-```
+```bash
 sbt.bat
 ```
 

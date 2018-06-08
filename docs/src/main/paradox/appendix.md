@@ -76,7 +76,7 @@ For best results, start the gatling load test up on another machine so you do no
 
 Once the test completes, you'll see an HTML file containing the load test chart:
 
-```
+```bash
 ./rest-api/target/gatling/gatlingspec-1472579540405/index.html
 ```
 

@@ -10,7 +10,7 @@ git clone https://github.com/playframework/play-scala-rest-api-example.git
 
 We're going to be showing an already working Play project with most of the code available under the `app/v1` directory.  There will be several different versions of the same project as this series expands, so you can compare different versions of the project against each other.
 
-To run Play on your own local computer, please see the instructions in the @ref[appendix](../appendix.md). 
+To run Play on your own local computer, please see the instructions in the @ref[appendix](../appendix.md).
 
 ## Introduction
 
@@ -31,7 +31,7 @@ case class PostResource(
 )
 ```
 
-This resource is mapped to and from JSON on the front end using Play, and is mapped to and from a persistent datastore on the backend using a handler.  
+This resource is mapped to and from JSON on the front end using Play, and is mapped to and from a persistent datastore on the backend using a handler.
 
 Play handles HTTP routing and representation for the REST API and makes it easy to write a non-blocking, asynchronous API that is an order of magnitude more efficient than other web application frameworks.
 
@@ -113,13 +113,12 @@ A controller [handles the work of processing](https://www.playframework.com/docu
 
 The methods in a controller consist of a method returning an [Action](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.mvc.Action).  The Action provides the "engine" to Play.
 
-Using the action, the controller passes in a block of code that takes a [`Request`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as `action { ... }` or [`action.async { ... }`](https://www.playframework.com/documentation/latest/ScalaAsync#How-to-create-a-Future[Result]). 
- 
+Using the action, the controller passes in a block of code that takes a [`Request`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.mvc.Request) passed in as implicit – this means that any in-scope method that takes an implicit request as a parameter will use this request automatically.  Then, the block must return either a [`Result`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.mvc.Result), or a [`Future[Result]`](http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future), depending on whether or not the action was called as `action { ... }` or [`action.async { ... }`](https://www.playframework.com/documentation/latest/ScalaAsync#How-to-create-a-Future[Result]).
+
 ### Handling GET Requests
 
-
 Here's a simple example of a Controller:
- 
+
 ```scala
 import javax.inject.Inject
 import play.api.mvc._
@@ -140,7 +139,7 @@ class MyController @Inject()(val controllerComponents: ControllerComponents) ext
 }
 ```
 
-In this example, `index1` and `asyncIndex` have exactly the same behavior.  Internally, it makes no difference whether we call `Result` or `Future[Result]` -- Play is non-blocking all the way through. 
+In this example, `index1` and `asyncIndex` have exactly the same behavior.  Internally, it makes no difference whether we call `Result` or `Future[Result]` -- Play is non-blocking all the way through.
 
 However, if you're already working with `Future`, async makes it easier to pass that `Future` around. You can read more about this in the [handling asynchronous results](https://www.playframework.com/documentation/latest/ScalaAsync) section of the Play documentation.
 
@@ -177,7 +176,7 @@ class PostController @Inject()(cc: PostControllerComponents)(implicit ec: Execut
 }
 ```
 
-Let's take `show` as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. `GET /v1/posts/123`.  
+Let's take `show` as an example.  Here, the action defines a workflow for a request that maps to a single resource, i.e. `GET /v1/posts/123`.
 
 ```scala
 def show(id: String): Action[AnyContent] = PostAction.async { implicit request =>
@@ -226,9 +225,9 @@ private def processJsonPost[A]()(implicit request: PostRequest[A]): Future[Resul
 }
 ```
 
-Here, the `process` action is an action wrapper, and `processJsonPost` does most of the work.  In `processJsonPost`, we get to the [form processing](https://www.playframework.com/documentation/latest/ScalaForms) part of the code.  
+Here, the `process` action is an action wrapper, and `processJsonPost` does most of the work.  In `processJsonPost`, we get to the [form processing](https://www.playframework.com/documentation/latest/ScalaForms) part of the code.
 
-Here, `form.bindFromRequest()` will map input from the HTTP request to a [`play.api.data.Form`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.data.Form), and handles form validation and error reporting.  
+Here, `form.bindFromRequest()` will map input from the HTTP request to a [`play.api.data.Form`](https://www.playframework.com/documentation/latest/api/scala/index.html#play.api.data.Form), and handles form validation and error reporting.
 
 If the `PostFormInput` passes validation, it's passed to the resource handler, using the `success` method.  If the form processing fails, then the `failure` method is called and the `FormError` is returned in JSON format.
 
@@ -272,7 +271,7 @@ The `PostAction.async` is a [custom action builder](https://www.playframework.co
 
 ActionBuilders work through a process called [action composition](https://www.playframework.com/documentation/latest/ScalaActionsComposition).  The ActionBuilder class has a method called `invokeBlock` that takes in a `Request` and a function (also known as a block, lambda or closure) that accepts a `Request` of a given type, and produces a `Future[Result]`.
 
-So, if you want to work with an `Action` that has a "FooRequest" that has a Foo attached, it's easy: 
+So, if you want to work with an `Action` that has a "FooRequest" that has a Foo attached, it's easy:
 
 ```scala
 class FooRequest[A](request: Request[A], val foo: Foo) extends WrappedRequest(request)
@@ -294,7 +293,7 @@ You create an `ActionBuilder[FooRequest, AnyContent]`, override `invokeBlock`, a
 Then, when you call `fooAction`, the request type is `FooRequest`:
 
 ```scala
-fooAction { request: FooRequest => 
+fooAction { request: FooRequest =>
   Ok(request.foo.toString)
 }
 ```
@@ -357,7 +356,7 @@ Now that we have a `PostRequest`, we can call "request.messagesApi" explicitly f
 
 The `PostResourceHandler` is responsible for converting backend data from a repository into a `PostResource`. We won't go into detail on the `PostRepository` details for now, only that it returns data in an backend-centric state.
 
-A REST resource has information that a backend repository does not -- it knows about the operations available on the resource, and contains URI information that a single backend may not have.  As such, we want to be able to change the representation that we use internally without changing the resource that we expose publicly.  
+A REST resource has information that a backend repository does not -- it knows about the operations available on the resource, and contains URI information that a single backend may not have.  As such, we want to be able to change the representation that we use internally without changing the resource that we expose publicly.
 
 You can see the `PostResourceHandler` [here](https://github.com/playframework/play-scala-rest-api-example/blob/2.6.x/app/v1/post/PostResourceHandler.scala#L35-L66):
 
@@ -423,7 +422,7 @@ object PostResource {
 }
 ```
 
-Once the implicit is defined in the companion object, then it will be looked up automatically when handed an instance of the class.  This means that when the controller converts to JSON, the conversion will just work, without any additional imports or setup.  
+Once the implicit is defined in the companion object, then it will be looked up automatically when handed an instance of the class.  This means that when the controller converts to JSON, the conversion will just work, without any additional imports or setup.
 
 ```scala
 val json: JsValue = Json.toJson(post)
