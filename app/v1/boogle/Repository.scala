@@ -30,8 +30,8 @@ trait Repository {
   * such as rendering.
   */
 @Singleton
+// TODO: check implicit EC injection
 class RepositoryImpl @Inject()()(implicit ec: BoogleExecutionContext) extends Repository {
-
   import com.sksamuel.elastic4s.embedded.LocalNode
   import com.sksamuel.elastic4s.http.ElasticDsl._
 
@@ -42,7 +42,7 @@ class RepositoryImpl @Inject()()(implicit ec: BoogleExecutionContext) extends Re
   val localNode = LocalNode("mycluster", "/tmp/datapath/3")
   val client = localNode.client(shutdownNodeOnClose = true)
 
-  // TODO: remove after debug
+  // TODO: move this into post-constuct init method
   client.execute {
     createIndex("book").mappings(mapping("bookType").fields(
       textField("title"), textField("author")
@@ -53,18 +53,17 @@ class RepositoryImpl @Inject()()(implicit ec: BoogleExecutionContext) extends Re
     ))
   }.await
 
-  // TODO: see if we can get rid of the 'await' inside the futures to make everything propery async
   override def listBooks()(implicit mc: MarkerContext): Future[Iterable[BookData]] = {
-    Future {
-      logger.trace(s"list: ")
-
-      val resp = client.execute {
-        search("book")
-      }.await
-      resp.result.hits.hits.map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("author").toString, null))
+    logger.trace("listing books")
+    client.execute {
+      search("book")
+    } map { bookResponse =>
+      // Return only titles, authors and IDs (no pages)
+      bookResponse.result.hits.hits.map(hit =>
+        BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("author").toString, null)
+      )
     }
   }
-
   override def getBookById(id: String)(implicit mc: MarkerContext): Future[Option[BookData]] = {
     // TODO: refactor to search by ID
     Future {
