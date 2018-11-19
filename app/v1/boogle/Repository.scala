@@ -1,4 +1,4 @@
-package v1.post
+package v1.boogle
 
 import javax.inject.{Inject, Singleton}
 import akka.actor.ActorSystem
@@ -7,30 +7,30 @@ import play.api.{Logger, MarkerContext}
 
 import scala.concurrent.Future
 
-final case class PostData(id: String, title: String, body: String)
+final case class BookData(id: String, title: String, body: String)
 
-class PostExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "repository.dispatcher")
+class BoogleExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "repository.dispatcher")
 
 /**
-  * A pure non-blocking interface for the PostRepository.
+  * A pure non-blocking interface for the Repository.
   */
-trait PostRepository {
-  def create(data: PostData)(implicit mc: MarkerContext): Future[String]
+trait Repository {
+  def create(data: BookData)(implicit mc: MarkerContext): Future[String]
 
-  def list()(implicit mc: MarkerContext): Future[Iterable[PostData]]
+  def list()(implicit mc: MarkerContext): Future[Iterable[BookData]]
 
-  def get(id: String)(implicit mc: MarkerContext): Future[Option[PostData]]
+  def get(id: String)(implicit mc: MarkerContext): Future[Option[BookData]]
 }
 
 /**
-  * A trivial implementation for the Post Repository.
+  * An Elasticsearch implementation of the repository.
   *
   * A custom execution context is used here to establish that blocking operations should be
   * executed in a different thread than Play's ExecutionContext, which is used for CPU bound tasks
   * such as rendering.
   */
 @Singleton
-class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends PostRepository {
+class RepositoryImpl @Inject()()(implicit ec: BoogleExecutionContext) extends Repository {
 
   // TODO: move these where they're used
   import com.sksamuel.elastic4s.embedded.LocalNode
@@ -45,7 +45,7 @@ class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends 
   // TODO: remove after debug
   client.execute {
     createIndex("boogle").mappings(
-      mapping("post").fields(
+      mapping("book").fields(
         textField("title"),
         textField("body")
       )
@@ -53,17 +53,17 @@ class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends 
   }.await
 
   // TODO: see if we can get rid of the 'await' inside the futures to make everything propery async
-  override def list()(implicit mc: MarkerContext): Future[Iterable[PostData]] = {
+  override def list()(implicit mc: MarkerContext): Future[Iterable[BookData]] = {
     Future {
       logger.trace(s"list: ")
       val resp = client.execute {
         search("boogle")
       }.await
-      resp.result.hits.hits.map(hit => PostData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
+      resp.result.hits.hits.map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
     }
   }
 
-  override def get(id: String)(implicit mc: MarkerContext): Future[Option[PostData]] = {
+  override def get(id: String)(implicit mc: MarkerContext): Future[Option[BookData]] = {
     // TODO: refactor to search by ID
     Future {
       logger.trace(s"list: ")
@@ -72,18 +72,18 @@ class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends 
       }.await
       val matchedHits = resp.result.hits.hits
         .filter(hit => hit.id == id)
-        .map(hit => PostData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
+        .map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
 
       if (matchedHits.size != 1) None
       else Option(matchedHits.head)
     }
   }
 
-  def create(data: PostData)(implicit mc: MarkerContext): Future[String] = {
+  def create(data: BookData)(implicit mc: MarkerContext): Future[String] = {
     Future {
       logger.trace(s"create: data = $data")
       val resp = client.execute {
-        indexInto("boogle" / "post")
+        indexInto("boogle" / "book")
           .fields("title" -> data.title, "body" -> data.body)
       }.await
       resp.result.id

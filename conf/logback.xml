@@ -53,7 +53,7 @@
 
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
-  <logger name="v1.post" level="TRACE" />
+  <logger name="v1.boogle" level="TRACE" />
 
   <root level="WARN">
     <appender-ref ref="ASYNCFILE" />

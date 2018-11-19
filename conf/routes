@@ -1,6 +1,6 @@
 GET        /                       controllers.HomeController.index
 
-->         /v1/posts               v1.post.PostRouter
+->         /v1/book                v1.boogle.Router
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
