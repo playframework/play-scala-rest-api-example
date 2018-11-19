@@ -22,6 +22,9 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion(scalaBinaryVersion.value) % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % gatlingVersion(scalaBinaryVersion.value) % Test
 
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.9.1"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.9.1"
+
 // The Play project itself
 lazy val root = (project in file("."))
   .enablePlugins(Common, PlayScala, GatlingPlugin)
@@ -39,3 +42,15 @@ lazy val docs = (project in file("docs")).enablePlugins(ParadoxPlugin).
   settings(
     paradoxProperties += ("download_url" -> "https://example.lightbend.com/v1/download/play-rest-api")
   )
+
+// major.minor are in sync with the elasticsearch releases
+val elastic4sVersion = "6.4.0"
+libraryDependencies ++= Seq(
+  "com.sksamuel.elastic4s" %% "elastic4s-core" % elastic4sVersion,
+
+  // for the http client
+  "com.sksamuel.elastic4s" %% "elastic4s-http" % elastic4sVersion,
+
+  // testing
+  "com.sksamuel.elastic4s" %% "elastic4s-embedded" % elastic4sVersion
+)

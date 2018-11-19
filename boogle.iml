@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="boogle" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/out/production/classes" />
+    <output-test url="file://$MODULE_DIR$/out/test/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/conf" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gatling" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/public" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
+    </content>
+    <content url="file://$MODULE_DIR$/build/src/play/binary/routesScalaSources" />
+    <content url="file://$MODULE_DIR$/build/src/play/binary/twirlTemplatesScalaSources" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-guice_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-logback_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:filters-helpers_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.joda:joda-convert:1.9.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.logstash.logback:logstash-logback-encoder:4.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.netaporter:scala-uri_2.12:0.4.16" level="project" />
+    <orderEntry type="library" name="Gradle: net.codingwell:scala-guice_2.12:4.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-java-forms_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-java_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.parboiled:parboiled_2.12:2.1.3" level="project" />
+    <orderEntry type="library" name="Gradle: io.spray:spray-json_2.12:1.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-json_2.12:2.6.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.scala-lang:scala-reflect:2.12.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-streams_2.12:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:twirl-api_2.12:1.3.15" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.akka:akka-slf4j_2.12:2.5.17" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.akka:akka-stream_2.12:2.5.17" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.akka:akka-actor_2.12:2.5.17" level="project" />
+    <orderEntry type="library" name="Gradle: org.scala-lang.modules:scala-java8-compat_2.12:0.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.chuusai:shapeless_2.12:2.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.scala-lang.modules:scala-xml_2.12:1.0.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-functional_2.12:2.6.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.typelevel:macro-compat_2.12:1.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.akka:akka-protobuf_2.12:2.5.17" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe:ssl-config-core_2.12:0.2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.scala-lang.modules:scala-parser-combinators_2.12:1.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.scala-lang:scala-library:2.12.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.inject.extensions:guice-assistedinject:4.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.inject:guice:4.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.2.3" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.2.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.8.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.11" level="project" />
+    <orderEntry type="library" name="Gradle: io.jsonwebtoken:jjwt:0.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.8.11.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.reflections:reflections:0.9.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:guava:23.6-android" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:1.3.9" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:build-link:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-netty-utils:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:jul-to-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.8.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.8.11" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.10" level="project" />
+    <orderEntry type="library" name="Gradle: javax.xml.bind:jaxb-api:2.3.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.6" level="project" />
+    <orderEntry type="library" name="Gradle: javax.transaction:jta:1.1" level="project" />
+    <orderEntry type="library" name="Gradle: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" name="Gradle: net.jodah:typetools:0.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.hibernate:hibernate-validator:5.4.1.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-context:4.3.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-core:4.3.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-beans:4.3.11.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.checkerframework:checker-compat-qual:2.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.1.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.j2objc:j2objc-annotations:1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe.play:play-exceptions:2.6.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.typesafe:config:1.3.3" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.javassist:javassist:3.21.0-GA" level="project" />
+    <orderEntry type="library" name="Gradle: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.jboss.logging:jboss-logging:3.3.0.Final" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml:classmate:1.3.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.play:play-docs_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.play:play-akka-http-server_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.play:play-server_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.play:play-doc_2.12:1.8.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.akka:akka-http-core_2.12:10.0.14" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.typesafe.akka:akka-parsing_2.12:10.0.14" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.pegdown:pegdown:1.6.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: commons-io:commons-io:2.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.parboiled:parboiled-java:1.1.7" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.parboiled:parboiled-core:1.1.7" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm-analysis:5.0.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm-util:5.0.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm-tree:5.0.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm:5.0.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.scalatestplus.play:scalatestplus-play_2.12:3.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-test_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ahc-ws_2.12:2.6.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ahc-ws-standalone_2.12:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:cachecontrol_2.12:1.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ws_2.12:2.6.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-akka-http-server_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-server_2.12:2.6.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling.highcharts:gatling-charts-highcharts:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-test-framework:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ws-standalone-json_2.12:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.scalatest:scalatest_2.12:3.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.scalactic:scalactic_2.12:3.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-app:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-charts:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-recorder:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-http:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-jms:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-jdbc:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-redis:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-metrics:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-core:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:gatling-commons:2.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.dongxiguo:fastring_2.12:0.3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.softwaremill.quicklens:quicklens_2.12:1.4.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.scala-logging:scala-logging_2.12:3.7.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ws-standalone-xml_2.12:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:play-ws-standalone_2.12:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.akka:akka-http-core_2.12:10.0.14" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.debasishg:redisclient_2.12:3.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.akka:akka-parsing_2.12:10.0.14" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.scala-lang.modules:scala-swing_2.12:2.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.suzaku:boopickle_2.12:1.2.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.github.scopt:scopt_2.12:3.7.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.gatling:jsonpath_2.12:0.6.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-java:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:htmlunit-driver:2.27" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.fluentlenium:fluentlenium-core:3.3.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-support:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-firefox-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-chrome-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-edge-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-ie-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-opera-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.codeborne:phantomjsdriver:1.4.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-safari-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-remote-driver:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.asynchttpclient:async-http-client:2.0.35" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.asynchttpclient:async-http-client-netty-utils:2.0.35" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.asynchttpclient:netty-resolver-dns:2.0.35" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.asynchttpclient:netty-resolver:2.0.35" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.asynchttpclient:netty-codec-dns:2.0.35" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sourceforge.htmlunit:htmlunit:2.27" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.httpcomponents:httpmime:4.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.httpcomponents:httpclient:4.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.novocode:junit-interface:0.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.scala-sbt:test-interface:1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.seleniumhq.selenium:selenium-api:3.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.netty:netty-reactive-streams:1.0.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: cglib:cglib-nodep:3.2.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.commons:commons-exec:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: commons-io:commons-io:2.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sourceforge.cssparser:cssparser:0.9.23" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.w3c.css:sac:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sourceforge.htmlunit:htmlunit-core-js:2.27" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sourceforge.htmlunit:neko-htmlunit:2.27" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.httpcomponents:httpcore:4.4.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty.websocket:websocket-client:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty:jetty-client:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty:jetty-http:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty.websocket:websocket-common:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty:jetty-io:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty:jetty-util:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.java.dev.jna:jna-platform:4.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.java.dev.jna:jna:4.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.eclipse.jetty.websocket:websocket-api:9.4.5.v20170502" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: xalan:xalan:2.7.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: xalan:serializer:2.7.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: xerces:xercesImpl:2.11.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:shaded-asynchttpclient:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.typesafe.play:shaded-oauth:1.1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: javax.cache:cache-api:1.0.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.tdunning:t-digest:3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.bouncycastle:bcpkix-jdk15on:1.58" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-codec-http:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.atteo.classindex:classindex:3.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.github.ben-manes.caffeine:caffeine:2.5.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.advantageous.boon:boon-json:0.6.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.sf.saxon:Saxon-HE:9.8.0-4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jodd:jodd-lagarto:3.8.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-transport-native-epoll:4.0.51.Final:linux-x86_64" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hdrhistogram:HdrHistogram:2.1.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.bouncycastle:bcprov-jdk15on:1.58" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-handler:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-codec:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.advantageous.boon:boon-reflekt:0.6.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jodd:jodd-core:3.8.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jodd:jodd-log:3.8.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-transport:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-buffer:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-common:4.0.51.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: commons-pool:commons-pool:1.6" level="project" />
+  </component>
+</module>

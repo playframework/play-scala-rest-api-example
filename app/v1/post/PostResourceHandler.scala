@@ -37,15 +37,16 @@ class PostResourceHandler @Inject()(
     postRepository: PostRepository)(implicit ec: ExecutionContext) {
 
   def create(postInput: PostFormInput)(implicit mc: MarkerContext): Future[PostResource] = {
-    val data = PostData(PostId("999"), postInput.title, postInput.body)
-    // We don't actually create the post, so return what we have
+    // TODO: Fix this mutable mess
+    var data = PostData(null, postInput.title, postInput.body)
     postRepository.create(data).map { id =>
+      data = PostData(id, postInput.title, postInput.body)
       createPostResource(data)
     }
   }
 
   def lookup(id: String)(implicit mc: MarkerContext): Future[Option[PostResource]] = {
-    val postFuture = postRepository.get(PostId(id))
+    val postFuture = postRepository.get(id)
     postFuture.map { maybePostData =>
       maybePostData.map { postData =>
         createPostResource(postData)

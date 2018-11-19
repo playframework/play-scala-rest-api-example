@@ -1,26 +1,13 @@
 package v1.post
 
 import javax.inject.{Inject, Singleton}
-
 import akka.actor.ActorSystem
 import play.api.libs.concurrent.CustomExecutionContext
 import play.api.{Logger, MarkerContext}
 
 import scala.concurrent.Future
 
-final case class PostData(id: PostId, title: String, body: String)
-
-class PostId private (val underlying: Int) extends AnyVal {
-  override def toString: String = underlying.toString
-}
-
-object PostId {
-  def apply(raw: String): PostId = {
-    require(raw != null)
-    new PostId(Integer.parseInt(raw))
-  }
-}
-
+final case class PostData(id: String, title: String, body: String)
 
 class PostExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "repository.dispatcher")
 
@@ -28,11 +15,11 @@ class PostExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExe
   * A pure non-blocking interface for the PostRepository.
   */
 trait PostRepository {
-  def create(data: PostData)(implicit mc: MarkerContext): Future[PostId]
+  def create(data: PostData)(implicit mc: MarkerContext): Future[String]
 
   def list()(implicit mc: MarkerContext): Future[Iterable[PostData]]
 
-  def get(id: PostId)(implicit mc: MarkerContext): Future[Option[PostData]]
+  def get(id: String)(implicit mc: MarkerContext): Future[Option[PostData]]
 }
 
 /**
@@ -45,34 +32,61 @@ trait PostRepository {
 @Singleton
 class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext) extends PostRepository {
 
+  // TODO: move these where they're used
+  import com.sksamuel.elastic4s.embedded.LocalNode
+  import com.sksamuel.elastic4s.http.ElasticDsl._
+
   private val logger = Logger(this.getClass)
 
-  private val postList = List(
-    PostData(PostId("1"), "title 1", "blog post 1"),
-    PostData(PostId("2"), "title 2", "blog post 2"),
-    PostData(PostId("3"), "title 3", "blog post 3"),
-    PostData(PostId("4"), "title 4", "blog post 4"),
-    PostData(PostId("5"), "title 5", "blog post 5")
-  )
+  // TODO: replace Elasticsearch setup with production cluster
+  val localNode = LocalNode("mycluster", "/tmp/datapath")
+  val client = localNode.client(shutdownNodeOnClose = true)
 
+  // TODO: remove after debug
+  client.execute {
+    createIndex("boogle").mappings(
+      mapping("post").fields(
+        textField("title"),
+        textField("body")
+      )
+    )
+  }.await
+
+  // TODO: see if we can get rid of the 'await' inside the futures to make everything propery async
   override def list()(implicit mc: MarkerContext): Future[Iterable[PostData]] = {
     Future {
       logger.trace(s"list: ")
-      postList
+      val resp = client.execute {
+        search("boogle")
+      }.await
+      resp.result.hits.hits.map(hit => PostData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
     }
   }
 
-  override def get(id: PostId)(implicit mc: MarkerContext): Future[Option[PostData]] = {
+  override def get(id: String)(implicit mc: MarkerContext): Future[Option[PostData]] = {
+    // TODO: refactor to search by ID
     Future {
-      logger.trace(s"get: id = $id")
-      postList.find(post => post.id == id)
+      logger.trace(s"list: ")
+      val resp = client.execute {
+        search("boogle")
+      }.await
+      val matchedHits = resp.result.hits.hits
+        .filter(hit => hit.id == id)
+        .map(hit => PostData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
+
+      if (matchedHits.size != 1) None
+      else Option(matchedHits.head)
     }
   }
 
-  def create(data: PostData)(implicit mc: MarkerContext): Future[PostId] = {
+  def create(data: PostData)(implicit mc: MarkerContext): Future[String] = {
     Future {
       logger.trace(s"create: data = $data")
-      data.id
+      val resp = client.execute {
+        indexInto("boogle" / "post")
+          .fields("title" -> data.title, "body" -> data.body)
+      }.await
+      resp.result.id
     }
   }
 
