@@ -236,5 +236,6 @@
     <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-buffer:4.0.51.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: io.netty:netty-common:4.0.51.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: commons-pool:commons-pool:1.6" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.12.7" level="application" />
   </component>
 </module>

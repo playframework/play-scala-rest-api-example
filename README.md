@@ -1,73 +1,54 @@
-# Play REST API
+"Boogle"
+To Organize the World's Literature
 
-[![Build Status](https://travis-ci.org/playframework/play-scala-rest-api-example.svg?branch=2.6.x)](https://travis-ci.org/playframework/play-scala-rest-api-example)
 
-This is the example project for [Making a REST API in Play](http://developer.lightbend.com/guides/play-rest-api/index.html).
 
-## Appendix
+The Why
 
-### Running
+You've always wanted a way to search book pages easier. Often you found yourself wondering where to find
+that great Sherlock Holmes quote or to quickly search for that great explanation you've read in that awesome
+tech book last week.
 
-You need to download and install sbt for this application to run.
+Driven by an overpowering desire to solve your own problem, you created Boogle – the best website to
+search book pages in the world. You experienced an almost instant deluge of other book fanatics to your
+website, got Tech Crunched and now find yourself staring at a long and sad list of red errors in a log file, at
+2am, wondering why your weekend MVP-grade implementation running on a €20 shared server can't cope
+with so many thousands of rabid users.
 
-Once you have sbt installed, the following at the command prompt will start up Play in development mode:
+You, however, decide to rise to the challenge: you created something awesome that people love, NOTHING
+is going to get in the way of ensuring that all your fans can get their book search goodness on. You make
+some coffee, crack your fingers, and get right on to making Boogle soar free. Like an eagle. Or a spaceship.
+Whatever, it's 2am.
 
-```bash
-sbt run
-```
 
-Play will start up on the HTTP port at <http://localhost:9000/>.   You don't need to deploy or reload anything -- changing any source code while the server is running will automatically recompile and hot-reload the application on the next HTTP request. 
 
-### Usage
+The Challenge
 
-If you call the same URL from the command line, you’ll see JSON. Using httpie, we can execute the command:
+Build a JSON API to support Boogle's frontend better than the MVP can. The API needs to:
+* Allow Books and Book Pages to be indexed for search. Ex: Index the content of Page 34 of The Sign
+  of Four so that users can find out how Watson met Sherlock.
+* Allow for fast search of Book Pages. Ex: the users will search "watson meets sherlock" and they
+  expect to know in which page that happened!
+* Allow for Books & Book Pages to be de-indexed, so that they are no longer available for search.
+* Allow for Books & Book Pages to be re-indexed, so that their information is updated.
 
-```bash
-http --verbose http://localhost:9000/v1/posts
-```
+Bear in mind that you:
+* Cannot overengineer the solution: it's 2am and Boogle's on fire. You need a good implementation
+  that solves your current problem, not a technical tour de force.
+*  Pick the right tools for the job. Which databases will you use, if any? How will you write your APIs?
+*  Are they fast, easy, available enough?
+*  You're a one-person shop (for now). Build something you can run and manage as such.
 
-and get back:
 
-```routes
-GET /v1/posts HTTP/1.1
-```
 
-Likewise, you can also send a POST directly as JSON:
+The Delivery
 
-```bash
-http --verbose POST http://localhost:9000/v1/posts title="hello" body="world"
-```
-
-and get:
-
-```routes
-POST /v1/posts HTTP/1.1
-```
-
-### Load Testing
-
-The best way to see what Play can do is to run a load test.  We've included Gatling in this test project for integrated load testing.
-
-Start Play in production mode, by [staging the application](https://www.playframework.com/documentation/2.5.x/Deploying) and running the play script:s
-
-```bash
-sbt stage
-cd target/universal/stage
-bin/play-rest-api-example -Dplay.crypto.secret=testing
-```
-
-Then you'll start the Gatling load test up (it's already integrated into the project):
-
-```bash
-sbt gatling:test
-```
-
-For best results, start the gatling load test up on another machine so you do not have contending resources.  You can edit the [Gatling simulation](http://gatling.io/docs/2.2.2/general/simulation_structure.html#simulation-structure), and change the numbers as appropriate.
-
-Once the test completes, you'll see an HTML file containing the load test chart:
-
-```bash
- ./rest-api/target/gatling/gatlingspec-1472579540405/index.html
-```
-
-That will contain your load test results.
+* Share the code preferably via a github private repository. If that's not possible, please email a
+  zipped file.
+* Please make small commits, so we can see your progress afterwards
+* Place a quick README showing how the app can be setup & run, how the APIs can be manually
+  tested (ex: cURL), some test data, etc.
+* Tests are welcome, but don't shoot for 100% coverage. One or two would be welcome.
+* Be prepared to answer questions about some of your choices!
+* If you can't do everything in a reasonable amount of time, try to do one complete function. We'll
+  take a look!
