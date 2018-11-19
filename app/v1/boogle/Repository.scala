@@ -7,7 +7,7 @@ import play.api.{Logger, MarkerContext}
 
 import scala.concurrent.Future
 
-final case class BookData(id: String, title: String, body: String)
+final case class BookData(id: String, title: String, author: String, pages: Map[Int, String])
 
 class BoogleExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomExecutionContext(actorSystem, "repository.dispatcher")
 
@@ -15,11 +15,11 @@ class BoogleExecutionContext @Inject()(actorSystem: ActorSystem) extends CustomE
   * A pure non-blocking interface for the Repository.
   */
 trait Repository {
-  def create(data: BookData)(implicit mc: MarkerContext): Future[String]
+  def indexBook(data: BookData)(implicit mc: MarkerContext): Future[String]
 
-  def list()(implicit mc: MarkerContext): Future[Iterable[BookData]]
+  def listBooks()(implicit mc: MarkerContext): Future[Iterable[BookData]]
 
-  def get(id: String)(implicit mc: MarkerContext): Future[Option[BookData]]
+  def getBookById(id: String)(implicit mc: MarkerContext): Future[Option[BookData]]
 }
 
 /**
@@ -32,61 +32,96 @@ trait Repository {
 @Singleton
 class RepositoryImpl @Inject()()(implicit ec: BoogleExecutionContext) extends Repository {
 
-  // TODO: move these where they're used
   import com.sksamuel.elastic4s.embedded.LocalNode
   import com.sksamuel.elastic4s.http.ElasticDsl._
 
   private val logger = Logger(this.getClass)
 
   // TODO: replace Elasticsearch setup with production cluster
-  val localNode = LocalNode("mycluster", "/tmp/datapath")
+  // TODO: also remember to clean out this directory when done developing
+  val localNode = LocalNode("mycluster", "/tmp/datapath/3")
   val client = localNode.client(shutdownNodeOnClose = true)
 
   // TODO: remove after debug
   client.execute {
-    createIndex("boogle").mappings(
-      mapping("book").fields(
-        textField("title"),
-        textField("body")
-      )
-    )
+    createIndex("book").mappings(mapping("bookType").fields(
+      textField("title"), textField("author")
+    ))
+    createIndex("page").mappings(mapping("pageType").fields(
+      // TODO: make keyword?
+      textField("bookId"), intField("number"), textField("content")
+    ))
   }.await
 
   // TODO: see if we can get rid of the 'await' inside the futures to make everything propery async
-  override def list()(implicit mc: MarkerContext): Future[Iterable[BookData]] = {
+  override def listBooks()(implicit mc: MarkerContext): Future[Iterable[BookData]] = {
     Future {
       logger.trace(s"list: ")
+
       val resp = client.execute {
-        search("boogle")
+        search("book")
       }.await
-      resp.result.hits.hits.map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
+      resp.result.hits.hits.map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("author").toString, null))
     }
   }
 
-  override def get(id: String)(implicit mc: MarkerContext): Future[Option[BookData]] = {
+  override def getBookById(id: String)(implicit mc: MarkerContext): Future[Option[BookData]] = {
     // TODO: refactor to search by ID
     Future {
       logger.trace(s"list: ")
-      val resp = client.execute {
-        search("boogle")
-      }.await
-      val matchedHits = resp.result.hits.hits
-        .filter(hit => hit.id == id)
-        .map(hit => BookData(hit.id, hit.sourceField("title").toString, hit.sourceField("body").toString))
 
-      if (matchedHits.size != 1) None
-      else Option(matchedHits.head)
+      // Get the book
+      val bookResponse = client.execute {
+        search("book")
+      }.await
+
+      val matchedBooks = bookResponse.result.hits.hits
+        .filter(hit => hit.id == id)
+
+      if (matchedBooks.length != 1) None
+      else {
+        val bookId = matchedBooks.head.id
+        val title = matchedBooks.head.sourceField("title").toString
+        val author = matchedBooks.head.sourceField("author").toString
+
+        // TODO: make this less horribly inefficient
+        // Get the pages
+        val pageResponse = client.execute {
+          search("page")
+        }.await
+
+        var pages: Map[Int, String] = Map()
+        pageResponse.result.hits.hits
+          .filter(hit => hit.sourceField("bookId").toString == id)
+          .foreach(hit => pages += (hit.sourceField("number").toString.toInt -> hit.sourceField("content").toString))
+
+        Option(BookData(bookId, title, author, pages))
+      }
     }
   }
 
-  def create(data: BookData)(implicit mc: MarkerContext): Future[String] = {
+  def indexBook(data: BookData)(implicit mc: MarkerContext): Future[String] = {
     Future {
       logger.trace(s"create: data = $data")
+
+      // Index the book
       val resp = client.execute {
-        indexInto("boogle" / "book")
-          .fields("title" -> data.title, "body" -> data.body)
+        indexInto("book" / "bookType")
+          .fields("title" -> data.title, "author" -> data.author)
       }.await
-      resp.result.id
+      val bookId = resp.result.id
+
+      // Index each page
+      for ((number, page) <- data.pages) {
+        var pageResp = client.execute {
+          indexInto("page" / "pageType")
+            .fields("bookId" -> bookId, "number" -> number, "content" -> page)
+        }.await
+        // DEBUG
+        println(pageResp.result.id)
+      }
+
+      bookId
     }
   }
 

@@ -9,7 +9,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class BookInput(title: String, body: String)
+case class BookInput(title: String, author: String, pages: List[String])
 
 /**
   * Takes HTTP requests and produces JSON.
@@ -25,15 +25,16 @@ class Controller @Inject()(cc: BoogleControllerComponents)(implicit ec: Executio
     Form(
       mapping(
         "title" -> nonEmptyText,
-        "body" -> text
+        "author" -> nonEmptyText,
+        "pages" -> list(text)
       )(BookInput.apply)(BookInput.unapply)
     )
   }
 
   def index: Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
     logger.trace("index: ")
-    bookResourceHandler.find.map { posts =>
-      Ok(Json.toJson(posts))
+    bookResourceHandler.find.map { book =>
+      Ok(Json.toJson(book))
     }
   }
 
@@ -44,8 +45,8 @@ class Controller @Inject()(cc: BoogleControllerComponents)(implicit ec: Executio
 
   def show(id: String): Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
     logger.trace(s"show: id = $id")
-    bookResourceHandler.lookup(id).map { post =>
-      Ok(Json.toJson(post))
+    bookResourceHandler.lookup(id).map { book =>
+      Ok(Json.toJson(book))
     }
   }
 
