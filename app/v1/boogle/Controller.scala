@@ -31,22 +31,15 @@ class Controller @Inject()(cc: BoogleControllerComponents)(implicit ec: Executio
     )
   }
 
-  def index: Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
-    logger.trace("index: ")
-    bookResourceHandler.find.map { book =>
-      Ok(Json.toJson(book))
-    }
-  }
-
   def process: Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
     logger.trace("process: ")
     processJsonBook()
   }
 
-  def show(id: String): Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
-    logger.trace(s"show: id = $id")
-    bookResourceHandler.lookup(id).map { book =>
-      Ok(Json.toJson(book))
+  def show(searchPhrase: String): Action[AnyContent] = BoogleActionBuilder.async { implicit request =>
+    logger.trace(s"show: searchPhrase = $searchPhrase")
+    resourceHandler.lookup(searchPhrase).map { page =>
+      Ok(Json.toJson(page))
     }
   }
 
@@ -56,8 +49,8 @@ class Controller @Inject()(cc: BoogleControllerComponents)(implicit ec: Executio
     }
 
     def success(input: BookInput) = {
-      bookResourceHandler.create(input).map { post =>
-        Created(Json.toJson(post)).withHeaders(LOCATION -> post.link)
+      resourceHandler.create(input).map { resource =>
+        Created(Json.toJson(resource))
       }
     }
 

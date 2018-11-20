@@ -85,13 +85,13 @@ class BoogleActionBuilder @Inject()(messagesApi: MessagesApi,
  * controller only has to have one thing injected.
  */
 case class BoogleControllerComponents @Inject()(boogleActionBuilder: BoogleActionBuilder,
-                                                resourceHandler: BookResourceHandler,
+                                                resourceHandler: ResourceHandler,
                                                 actionBuilder: DefaultActionBuilder,
                                                 parsers: PlayBodyParsers,
                                                 messagesApi: MessagesApi,
                                                 langs: Langs,
                                                 fileMimeTypes: FileMimeTypes,
-                                                executionContext: scala.concurrent.ExecutionContext)
+                                                executionContext: ExecutionContext)
   extends ControllerComponents
 
 /**
@@ -102,5 +102,5 @@ class BoogleBaseController @Inject()(boogleControllerComponents: BoogleControlle
 
   def BoogleActionBuilder: BoogleActionBuilder = boogleControllerComponents.boogleActionBuilder
 
-  def bookResourceHandler: BookResourceHandler = boogleControllerComponents.resourceHandler
+  def resourceHandler: ResourceHandler = boogleControllerComponents.resourceHandler
 }

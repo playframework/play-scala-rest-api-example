@@ -12,21 +12,12 @@ import play.api.routing.sird._
 class Router @Inject()(controller: Controller) extends SimpleRouter {
   val prefix = "/v1/book"
 
-  def link(id: String): String = {
-    import com.netaporter.uri.dsl._
-    val url = prefix / id
-    url.toString()
-  }
-
   override def routes: Routes = {
-    case GET(p"/") =>
-      controller.index
-
     case POST(p"/") =>
       controller.process
 
-    case GET(p"/$id") =>
-      controller.show(id)
+    case GET(p"/page" ? q_?"searchPhrase=$searchPhrase") =>
+      controller.show(searchPhrase.get)
   }
 
 }
