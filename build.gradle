@@ -43,7 +43,7 @@ dependencies {
     play "org.joda:joda-convert:2.1.2"
     play "net.logstash.logback:logstash-logback-encoder:5.6"
 
-    play "com.netaporter:scala-uri_$scalaVersion:0.4.16"
+    play "io.lemonlabs:scala-uri_$scalaVersion:1.4.1"
     play "net.codingwell:scala-guice_$scalaVersion:4.2.1"
 
     playTest "org.scalatestplus.play:scalatestplus-play_$scalaVersion:4.0.0-RC2"
